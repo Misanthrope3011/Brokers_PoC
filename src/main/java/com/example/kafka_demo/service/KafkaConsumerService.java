@@ -1,7 +1,7 @@
 package com.example.kafka_demo.service;
 
 import com.example.kafka_demo.data.MainEntity;
-import com.example.kafka_demo.data.ThrougputData;
+import com.example.kafka_demo.data.ThroughputData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,19 +18,19 @@ import java.io.IOException;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "consumerMode", havingValue = "true")
+@ConditionalOnProperty(value = "common.modes.consumerMode", havingValue = "true")
 public class KafkaConsumerService {
 
     private final ObjectMapper objectMapper;
     private final DataTestUtilsService dataTestUtilsService;
 
-    @KafkaListener(topics = {"example-events"}, groupId = "xddd")
+    @KafkaListener(topics = {"${common.topic.config.topicName}"}, groupId = "xddd")
     @Transactional(propagation = Propagation.REQUIRED)
     public void onMessage(ConsumerRecord<String, Bytes> data){
         try {
             long processingTimeMillis = System.currentTimeMillis() - data.timestamp();
             MainEntity mainEntity = objectMapper.readValue(data.value().get(), MainEntity.class);
-            var througputData = new ThrougputData(ThrougputData.BrokerDomain.KAFKA, processingTimeMillis);
+            var througputData = new ThroughputData(ThroughputData.BrokerDomain.KAFKA, processingTimeMillis);
             dataTestUtilsService.saveThroughtPutData(througputData);
             dataTestUtilsService.saveOuterEntity(mainEntity);
         } catch (IOException e) {

@@ -6,6 +6,14 @@ plugins {
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
+def spring_cloud_dependencies_version = '4.0.2'
+def kafka_spring_api_version = '3.0.12'
+def pulsar_api_version = '3.1.1'
+
+
+springBoot {
+    version = '3.1.5'
+}
 
 java {
     sourceCompatibility = '17'
@@ -23,19 +31,21 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.kafka:spring-kafka'
+    implementation "org.springframework.kafka:spring-kafka:${kafka_spring_api_version}"
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'org.springframework.kafka:spring-kafka-test:3.0.12'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.20.0'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
-    implementation("org.springframework.boot:spring-boot-starter-web:3.1.4")
-    implementation("org.springframework.pulsar:spring-pulsar-spring-boot-starter:0.2.0")
-    implementation ('org.springframework.boot:spring-boot-starter-amqp')
-    implementation ('org.apache.kafka:kafka-clients:3.4.0')
-    implementation group: 'org.apache.pulsar', name: 'pulsar-client', version: '3.1.1'
+    implementation group: 'org.apache.pulsar', name: 'pulsar-client', version: "${pulsar_api_version}"
+    implementation "org.springframework.boot:spring-boot-starter-web:"
+    implementation "org.springframework.pulsar:spring-pulsar-spring-boot-starter:0.2.0"
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'org.apache.kafka:kafka-clients:3.4.0'
+    implementation "org.springframework.cloud:spring-cloud-stream:${spring_cloud_dependencies_version}"
+    implementation "org.springframework.cloud:spring-cloud-stream-binder-rabbit:${spring_cloud_dependencies_version}"
 }
 
 tasks.named('test') {

@@ -2,6 +2,8 @@ server.port: 8081
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/kafka_db
+    username: clm
+    password: clm
     driver-class-name: org.postgresql.Driver
   kafka:
     bootstrap-servers: localhost:9092
@@ -30,5 +32,14 @@ spring:
             schema-info:
               schema-type: JSON
 
-producerMode: true
-consumerMode: true
+
+
+common:
+  modes:
+    producerMode: true
+    consumerMode: true
+  topic:
+    config:
+      number-of-partitions: 5
+      replication-factor: 1
+      topic-name: STRING-TOPIC2

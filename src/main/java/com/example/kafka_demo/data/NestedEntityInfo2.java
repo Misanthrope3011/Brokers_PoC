@@ -32,6 +32,4 @@ public class NestedEntityInfo2 implements Serializable {
     @Column(name = "ETI2_AUDIT_RD")
     private LocalDateTime auditRemoveDate;
 
-    // Other fields, getters, and setters
-
 }

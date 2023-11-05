@@ -21,9 +21,9 @@ public class RandomDataUtils {
 
     public List<MainEntity> generateRandom(long size) {
         var entityList = new ArrayList<MainEntity>();
-        var byteImage = new byte[25];
+        var byteImage = new byte[2048];
 
-        int subentitySize = secureRandom.nextInt(3);
+        int subEntityArraySize = secureRandom.nextInt(3);
 
         for(int i = 1; i < size; i++) {
             var nestedEntityInfos = new ArrayList<NestedEntityInfo>();
@@ -34,7 +34,7 @@ public class RandomDataUtils {
                     log.info("Waiting to initialize data: Progress : ".concat(String.format("%.0f", progress * 100)).concat("%"));
                 }
             }
-            for(int j = 0; j < subentitySize; j++) {
+            for(int j = 0; j < subEntityArraySize; j++) {
                 secureRandom.nextBytes(byteImage);
 
                 var nestedEntityInfo1 = new NestedEntityInfo();

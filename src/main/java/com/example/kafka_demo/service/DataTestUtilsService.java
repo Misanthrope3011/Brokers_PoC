@@ -3,9 +3,9 @@ package com.example.kafka_demo.service;
 import com.example.kafka_demo.data.MainEntity;
 import com.example.kafka_demo.data.NestedEntityInfo;
 import com.example.kafka_demo.data.NestedEntityInfo2;
-import com.example.kafka_demo.data.ThrougputData;
+import com.example.kafka_demo.data.ThroughputData;
 import com.example.kafka_demo.repository.MainEntityRepository;
-import com.example.kafka_demo.repository.ThroughtputDataRepository;
+import com.example.kafka_demo.repository.ThroughputDataRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +23,12 @@ public class DataTestUtilsService {
 
     private final MainEntityRepository outerEntityRepository;
     private final EntityManager entityManager;
-    private final ThroughtputDataRepository throughtputDataRepository;
+    private final ThroughputDataRepository throughtputDataRepository;
 
     public void truncate() {
         throughtputDataRepository.deleteAll();
     }
-    public void saveThroughtPutData(ThrougputData througputData) {
+    public void saveThroughtPutData(ThroughputData througputData) {
         throughtputDataRepository.save(througputData);
     }
 

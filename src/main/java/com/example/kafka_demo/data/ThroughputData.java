@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "THROUGHPUT_DATA")
 @NoArgsConstructor
-public class ThrougputData {
+public class ThroughputData {
 
     @Id
     @Column(name = "TRD_ID")
@@ -48,7 +48,7 @@ public class ThrougputData {
         }
     }
 
-    public ThrougputData(BrokerDomain brokerDomain, Long processingTimeMillis) {
+    public ThroughputData(BrokerDomain brokerDomain, Long processingTimeMillis) {
         this.brokerDomain = brokerDomain;
         this.processingTimeMillis = processingTimeMillis;
     }
