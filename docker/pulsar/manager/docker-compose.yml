@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  pulsar-manager:
+    image: apachepulsar/pulsar-manager:v0.3.0
+    ports:
+      - "9527:9527"
+      - "7750:7750"
+    environment:
+      SPRING_CONFIGURATION_FILE: /pulsar-manager/pulsar-manager/application.properties

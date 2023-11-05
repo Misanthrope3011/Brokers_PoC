@@ -1,0 +1,34 @@
+server.port: 8081
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/kafka_db
+    driver-class-name: org.postgresql.Driver
+  kafka:
+    bootstrap-servers: localhost:9092
+    client-id: kafka_test
+    consumer:
+      group-id: kafka_test_group
+      value-deserializer: org.apache.kafka.common.serialization.BytesDeserializer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+      max-poll-records: 10
+    producer:
+      batch-size: 2000
+
+  jpa:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+  pulsar:
+    client:
+      service-url: pulsar://localhost:6650
+      defaults:
+        type-mappings:
+          - message-type: com.example.kafka_demo.dto.User
+            schema-info:
+              schema-type: JSON
+
+producerMode: true
+consumerMode: true
