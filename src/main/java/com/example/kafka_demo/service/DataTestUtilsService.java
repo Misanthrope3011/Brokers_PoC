@@ -6,8 +6,10 @@ import com.example.kafka_demo.data.NestedEntityInfo2;
 import com.example.kafka_demo.data.ThroughputData;
 import com.example.kafka_demo.repository.MainEntityRepository;
 import com.example.kafka_demo.repository.ThroughputDataRepository;
+import com.example.kafka_demo.utils.RandomDataUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -16,20 +18,29 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
+@Getter
 public class DataTestUtilsService {
 
     private final MainEntityRepository outerEntityRepository;
     private final EntityManager entityManager;
-    private final ThroughputDataRepository throughtputDataRepository;
+    private final ThroughputDataRepository throughputDataRepository;
+    private final RandomDataUtils randomDataUtils;
+    private final ExecutorService executorService;
+
+    public List<MainEntity> loadData(long size) throws ExecutionException, InterruptedException {
+       return executorService.execute(() -> randomDataUtils.generateRandomData(size));
+    }
 
     public void truncate() {
-        throughtputDataRepository.deleteAll();
+        throughputDataRepository.deleteAll();
     }
-    public void saveThroughtPutData(ThroughputData througputData) {
-        throughtputDataRepository.save(througputData);
+
+    public void saveThroughtPutData(ThroughputData throughputData) {
+        throughputDataRepository.save(throughputData);
     }
 
     public MainEntity saveOuterEntity(MainEntity outerEntity) {

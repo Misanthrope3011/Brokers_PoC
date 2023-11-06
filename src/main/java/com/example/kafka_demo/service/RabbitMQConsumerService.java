@@ -30,8 +30,8 @@ public class RabbitMQConsumerService implements MessageListener {
         try {
             long processingTimeMillis = System.currentTimeMillis() - message.getMessageProperties().getTimestamp().getTime();
             var mainEntity = objectMapper.readValue(message.getBody(), MainEntity.class);
-            var througputData = new ThroughputData(ThroughputData.BrokerDomain.RABBITMQ, processingTimeMillis);
-            dataTestUtilsService.saveThroughtPutData(througputData);
+            var throughputData = new ThroughputData(ThroughputData.BrokerDomain.RABBITMQ, processingTimeMillis);
+            dataTestUtilsService.saveThroughtPutData(throughputData);
             dataTestUtilsService.saveOuterEntity(mainEntity);
         } catch (IOException e) {
             log.error("Exception during deserializing message " + ExceptionUtils.getMessage(e));

@@ -1,7 +1,7 @@
 package com.example.kafka_demo.config;
 
 import com.example.kafka_demo.ApplicationConstants;
-import com.example.kafka_demo.config.properties.BrokersConfig;
+import com.example.kafka_demo.config.properties.BrokersConfigProperties;
 import com.example.kafka_demo.dto.DefaultSchema;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -20,12 +20,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.kafka_demo.ApplicationConstants.DEFAULT_LOOKUP_BIND;
+import static com.example.kafka_demo.ApplicationConstants.SUBSCRIPTION_NAME;
 
 @Configuration
 @RequiredArgsConstructor
 public class KafkaProducerConfig {
 
-    private final BrokersConfig brokersProperties;
+    private final BrokersConfigProperties brokersProperties;
 
 
     @Bean
@@ -61,7 +62,7 @@ public class KafkaProducerConfig {
 
             return PulsarClient.builder()
                     .dnsLookupBind(DEFAULT_LOOKUP_BIND, 0)
-                    .serviceUrl(ApplicationConstants.BrokerServicesUrls.PULSAR_HOST)
+                    .serviceUrl(ApplicationConstants.BrokerServicesUrls.PULSAR_ADMIN_URL)
                     .build();
         } catch (Exception e) {
             throw new RuntimeException("Error creating Pulsar client", e);
@@ -79,7 +80,8 @@ public class KafkaProducerConfig {
     public Consumer<byte[]> pulsarConsumer() throws PulsarClientException {
         return pulsarClient().newConsumer(Schema.BYTES)
                 .topic(brokersProperties.topicName())
-                .subscriptionName("string-topic-subscription")
+                .subscriptionName(SUBSCRIPTION_NAME)
+                .subscriptionType(SubscriptionType.Shared)
                 .subscribe();
     }
 

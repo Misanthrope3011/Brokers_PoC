@@ -1,5 +1,6 @@
 package com.example.kafka_demo.service;
 
+import com.example.kafka_demo.ApplicationConstants;
 import com.example.kafka_demo.data.MainEntity;
 import com.example.kafka_demo.data.ThroughputData;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +30,7 @@ public class PulsarConsumerService {
     private final DataTestUtilsService dataTestUtilsService;
 
     @PulsarListener(
-            subscriptionName = "string-topic-subscription",
+            subscriptionName = ApplicationConstants.SUBSCRIPTION_NAME,
             topics = "${common.topic.config.topic-name}",
             subscriptionType = SubscriptionType.Shared,
             schemaType = SchemaType.JSON

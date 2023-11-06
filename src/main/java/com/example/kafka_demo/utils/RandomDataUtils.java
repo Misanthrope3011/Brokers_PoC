@@ -19,7 +19,7 @@ public class RandomDataUtils {
 
     private final SecureRandom secureRandom;
 
-    public List<MainEntity> generateRandom(long size) {
+    public List<MainEntity> generateRandomData(long size) {
         var entityList = new ArrayList<MainEntity>();
         var byteImage = new byte[2048];
 

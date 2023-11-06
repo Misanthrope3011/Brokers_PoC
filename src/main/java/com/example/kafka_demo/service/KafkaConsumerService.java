@@ -24,7 +24,7 @@ public class KafkaConsumerService {
     private final ObjectMapper objectMapper;
     private final DataTestUtilsService dataTestUtilsService;
 
-    @KafkaListener(topics = {"${common.topic.config.topicName}"}, groupId = "xddd")
+    @KafkaListener(topics = {"${common.topic.config.topic-name}"}, groupId = "testGroup")
     @Transactional(propagation = Propagation.REQUIRED)
     public void onMessage(ConsumerRecord<String, Bytes> data){
         try {

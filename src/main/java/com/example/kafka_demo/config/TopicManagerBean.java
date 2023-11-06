@@ -1,11 +1,12 @@
 package com.example.kafka_demo.config;
 
-import com.example.kafka_demo.config.properties.BrokersConfig;
+import com.example.kafka_demo.config.properties.BrokersConfigProperties;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.apache.pulsar.common.policies.data.Policies;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +20,7 @@ import static org.springframework.pulsar.support.PulsarHeaders.TOPIC_NAME;
 @RequiredArgsConstructor
 public class TopicManagerBean {
 
-    private final BrokersConfig brokersConfig;
+    private final BrokersConfigProperties brokersConfig;
     private final KafkaAdmin kafkaAdmin;
     private final PulsarAdmin pulsarAdmin;
     public static final String DEFAULT_CLUSTER_NAMESPACE = "public/default";
@@ -27,9 +28,9 @@ public class TopicManagerBean {
     @EventListener(ApplicationReadyEvent.class)
     void initPartitions() throws PulsarAdminException {
         createKafkaTopic();
-//        Policies policies = pulsarAdmin.namespaces().getPolicies(DEFAULT_CLUSTER_NAMESPACE);
-//        policies.replication_clusters.clear();
-//        policies.replication_clusters.add(DEFAULT_CLUSTER_NAMESPACE);
+            Policies policies = pulsarAdmin.namespaces().getPolicies(DEFAULT_CLUSTER_NAMESPACE);
+            policies.replication_clusters.clear();
+            policies.replication_clusters.add(DEFAULT_CLUSTER_NAMESPACE);
 
     }
 
@@ -41,8 +42,16 @@ public class TopicManagerBean {
     @Bean
     public PulsarTopic pulsarTopic() {
         return PulsarTopic.builder(TOPIC_NAME)
-                .numberOfPartitions(5)
+                .numberOfPartitions(brokersConfig.numberOfPartitions())
                 .build();
+    }
+
+    @Bean
+    TopicExchange exchange() {
+        System.setProperty("spring.cloud.stream.bindings.output.producer.partition-count", String.valueOf(brokersConfig.numberOfPartitions()));
+        System.setProperty("spring.cloud.stream.bindings.output.producer.partition-key-expression", "headers['id']");
+
+        return new TopicExchange(brokersConfig.topicName());
     }
 
 }

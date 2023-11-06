@@ -38,6 +38,10 @@ public class ThroughputData {
         RABBITMQ("rabbitmq");
         private final String name;
 
+        public String getName() {
+            return name;
+        }
+
         BrokerDomain(String name) {
             this.name = name;
         }

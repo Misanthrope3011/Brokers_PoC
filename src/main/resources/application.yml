@@ -28,7 +28,7 @@ spring:
       service-url: pulsar://localhost:6650
       defaults:
         type-mappings:
-          - message-type: com.example.kafka_demo.dto.User
+          - message-type: com.example.kafka_demo.dto.DefaultSchema
             schema-info:
               schema-type: JSON
 
