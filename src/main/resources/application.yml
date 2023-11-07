@@ -3,7 +3,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/kafka_db
     username: clm
-    password: clm
+    password: ENC(Eh6ysCOM8cFm2dC0flEOLPKR0vOrp3T3cTHLGgZVB+cTfZHH3jqoWsp/t89M4N22)
     driver-class-name: org.postgresql.Driver
   kafka:
     bootstrap-servers: localhost:9092
@@ -22,7 +22,7 @@ spring:
       hibernate:
         hbm2ddl:
           auto: update
-      dialect: org.hibernate.dialect.PostgreSQLDialect
+      dialect: org.hibernate.dialect.PostgreSQL82Dialect
   pulsar:
     client:
       service-url: pulsar://localhost:6650
@@ -31,8 +31,6 @@ spring:
           - message-type: com.example.kafka_demo.dto.DefaultSchema
             schema-info:
               schema-type: JSON
-
-
 
 common:
   modes:
@@ -43,3 +41,15 @@ common:
       number-of-partitions: 5
       replication-factor: 1
       topic-name: STRING-TOPIC2
+
+
+jasypt:
+  encryptor:
+    password: ${ENCRYPTOR_PASSWORD}
+    algorithm: "PBEWITHHMACSHA512ANDAES_256"
+    salt-generator-classname: "org.jasypt.salt.RandomSaltGenerator"
+    iv-generator-classname: "org.jasypt.iv.RandomIvGenerator"
+    provider-name: "SunJCE"
+    string-output-type: "base64"
+    pool-size: 1
+    key-obtention-iterations: 1000
