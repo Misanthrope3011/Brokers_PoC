@@ -1,6 +1,6 @@
 package com.example.kafka_demo.utils;
 
-import com.example.kafka_demo.data.MainEntity;
+import com.example.kafka_demo.data.AccumulationData;
 import com.example.kafka_demo.data.NestedEntityInfo;
 import com.example.kafka_demo.data.NestedEntityInfo2;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +19,13 @@ public class RandomDataUtils {
 
     private final SecureRandom secureRandom;
 
-    public List<MainEntity> generateRandomData(long size) {
-        var entityList = new ArrayList<MainEntity>();
+    public List<AccumulationData> generateRandomData(long size) {
+        var entityList = new ArrayList<AccumulationData>();
         var byteImage = new byte[2048];
 
         int subEntityArraySize = secureRandom.nextInt(3);
 
-        for(int i = 1; i < size; i++) {
+        for(int i = 0; i < size; i++) {
             var nestedEntityInfos = new ArrayList<NestedEntityInfo>();
             var nestedEntityInfos2 = new ArrayList<NestedEntityInfo2>();
             double progress = Double.parseDouble(String.format("%.3f", (double) i / (size)));
@@ -49,8 +49,8 @@ public class RandomDataUtils {
                 nestedEntityInfos2.add(nestedEntityInfo2);
             }
 
-            MainEntity entity;
-            entity = MainEntity.builder()
+            AccumulationData entity;
+            entity = AccumulationData.builder()
                     .id(secureRandom.nextLong(10000))
                     .image(byteImage)
                     .desc(generateString(100))
@@ -60,7 +60,7 @@ public class RandomDataUtils {
 
             entityList.add(entity);
         }
-        log.info("Data init finished");
+
 
         return entityList;
     }

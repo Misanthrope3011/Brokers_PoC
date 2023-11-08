@@ -1,6 +1,5 @@
 package com.example.kafka_demo.config;
 
-import com.example.kafka_demo.config.properties.BrokersConfigProperties;
 import com.example.kafka_demo.service.RabbitMQConsumerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Binding;
@@ -15,8 +14,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.cloud.stream.binder.rabbit.config.RabbitBinderConfiguration;
-import org.springframework.cloud.stream.binder.rabbit.properties.RabbitBinderConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -30,20 +27,20 @@ import org.springframework.pulsar.annotation.EnablePulsar;
 public class BrokerConsumerConfigs {
 
     private final RabbitMQConsumerService rabbitMQConsumerService;
-    private final BrokersConfigProperties brokersConfigProperties;
+    private final AppConfigurationProperties appConfigProperties;
 
     @Bean
     public ConnectionFactory connectionFactory() {
-        var connectionFactory = new CachingConnectionFactory(brokersConfigProperties.hostName());
+        var connectionFactory = new CachingConnectionFactory(appConfigProperties.getBrokerConsumerConfigs().hostName());
         connectionFactory.setCacheMode(CachingConnectionFactory.CacheMode.CHANNEL);
-        connectionFactory.setUsername("myuser");
-        connectionFactory.setPassword("mypassword");
+        connectionFactory.setUsername(appConfigProperties.getCredentialsConfig().rabbitmq().username());
+        connectionFactory.setPassword(appConfigProperties.getCredentialsConfig().rabbitmq().password());
         return connectionFactory;
     }
 
     @Bean
     public Queue queue() {
-        return new Queue(brokersConfigProperties.topicName());
+        return new Queue(appConfigProperties.getBrokerConsumerConfigs().topicName());
     }
 
     @Bean
@@ -51,6 +48,7 @@ public class BrokerConsumerConfigs {
         var container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory());
         container.setQueues(queue());
+        container.setConcurrency(appConfigProperties.getBrokerConsumerConfigs().concurrency());
         container.setMessageListener(rabbitMQConsumerService);
         return container;
     }
@@ -70,14 +68,14 @@ public class BrokerConsumerConfigs {
     @Bean
     public RabbitTemplate rabbitTemplate() {
         RabbitTemplate template = new RabbitTemplate(connectionFactory());
-        template.setDefaultReceiveQueue(brokersConfigProperties.topicName());
+        template.setDefaultReceiveQueue(appConfigProperties.getBrokerConsumerConfigs().topicName());
         template.setMessageConverter(jsonMessageConverter());
         return template;
     }
 
     @Bean
     Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(brokersConfigProperties.topicName());
+        return BindingBuilder.bind(queue).to(exchange).with(appConfigProperties.getBrokerConsumerConfigs().topicName());
     }
 
 }

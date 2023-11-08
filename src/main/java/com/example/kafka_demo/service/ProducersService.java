@@ -15,6 +15,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.IntStream;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -44,8 +46,6 @@ public class ProducersService {
                         throw new RuntimeException("Error while deserializing message: " + ExceptionUtils.getMessage(ex));
                     }
                 });
-
-        log.info("Load data finished");
     }
 
 }

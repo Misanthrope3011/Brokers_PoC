@@ -22,7 +22,7 @@ public class ThroughputData {
     private Long id;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "ETB_BROKER_DOMAIN")
+    @Column(name = "TRD_BROKER_DOMAIN")
     private BrokerDomain brokerDomain;
 
     @Column(name = "TRD_PROCESSING_TIME")
@@ -31,16 +31,13 @@ public class ThroughputData {
     @Column(name = "TRD_AUDIT_CD")
     private LocalDateTime localDateTime = LocalDateTime.now();
 
+    @Getter
     public enum BrokerDomain {
         KAFKA("kafka"),
-
+        RABBITMQ_PARTITIONED("rabbitmq_partitioned"),
         PULSAR("pulsar"),
         RABBITMQ("rabbitmq");
         private final String name;
-
-        public String getName() {
-            return name;
-        }
 
         BrokerDomain(String name) {
             this.name = name;

@@ -1,6 +1,6 @@
 package com.example.kafka_demo.service;
 
-import com.example.kafka_demo.data.MainEntity;
+import com.example.kafka_demo.data.AccumulationData;
 import com.example.kafka_demo.data.NestedEntityInfo;
 import com.example.kafka_demo.data.NestedEntityInfo2;
 import com.example.kafka_demo.data.ThroughputData;
@@ -12,6 +12,7 @@ import jakarta.persistence.Query;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +32,7 @@ public class DataTestUtilsService {
     private final RandomDataUtils randomDataUtils;
     private final ExecutorService executorService;
 
-    public List<MainEntity> loadData(long size) throws ExecutionException, InterruptedException {
+    public List<AccumulationData> loadData(long size) throws ExecutionException, InterruptedException {
        return executorService.execute(() -> randomDataUtils.generateRandomData(size));
     }
 
@@ -43,9 +44,9 @@ public class DataTestUtilsService {
         throughputDataRepository.save(throughputData);
     }
 
-    public MainEntity saveOuterEntity(MainEntity outerEntity) {
+    public AccumulationData saveOuterEntity(AccumulationData outerEntity) {
         if (outerEntity.getId() != null) {
-            Optional<MainEntity> existingEntity = outerEntityRepository.findById(outerEntity.getId());
+            Optional<AccumulationData> existingEntity = outerEntityRepository.findById(outerEntity.getId());
 
             if (existingEntity.isPresent() && !existingEntity.get().getSubEntities1().isEmpty()) {
                 for (NestedEntityInfo existingSubEntity : existingEntity.get().getSubEntities1()) {
@@ -67,14 +68,14 @@ public class DataTestUtilsService {
         return outerEntityRepository.save(outerEntity);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void saveOuterEntityQuery(MainEntity outerEntity) {
-        MainEntity existingEntity = outerEntityRepository.findById(outerEntity.getId()).orElse(null);
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ)
+    public void saveOuterEntityQuery(AccumulationData outerEntity) {
+        AccumulationData existingEntity = outerEntityRepository.findById(outerEntity.getId()).orElse(null);
 
         updateItems(outerEntity);
     }
 
-    private void updateItems(MainEntity outerEntity) {
+    private void updateItems(AccumulationData outerEntity) {
         Query query = entityManager.createNativeQuery("UPDATE SUB_ENTITY_TABLE SET eti_audit_rd = CURRENT_TIMESTAMP WHERE ETI_ETB_ID = :id AND ETI_ID NOT IN :items");
         Query query2 = entityManager.createNativeQuery("UPDATE SUB_ENTITY_TABLE2 SET eti2_audit_rd = CURRENT_TIMESTAMP WHERE ETI2_ETB_ID = :id AND ETI2_ID NOT IN :items");
 
@@ -92,7 +93,6 @@ public class DataTestUtilsService {
 
         query.executeUpdate();
 
-        // Save the updated OuterEntity
         outerEntityRepository.save(outerEntity);
     }
 }

@@ -1,4 +1,17 @@
 server.port: 8081
+
+common:
+  modes:
+    producerMode: true
+    consumerMode: true
+  topic:
+    config:
+      number-of-partitions: 5
+      replication-factor: 1
+      topic-name: STRING-TOPIC2
+      concurrency: 5
+      load-size: 0
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/kafka_db
@@ -16,12 +29,28 @@ spring:
       max-poll-records: 10
     producer:
       batch-size: 2000
+  cloud:
+      function:
+        definition: consumerMethod
+      stream:
+        bindings:
+          senderMethod-out-0:
+            producer:
+              partitionKeyExtractorName: headers.id
+              partitionCount: ${common.topic.config.number-of-partitions}
+            destination: ${common.topic.config.topic-name}
+          consumerMethod-in-0:
+            destination: ${common.topic.config.topic-name}
+            consumer:
+              concurrency: 5
+
+
 
   jpa:
     properties:
       hibernate:
         hbm2ddl:
-          auto: update
+          auto: create-drop
       dialect: org.hibernate.dialect.PostgreSQL82Dialect
   pulsar:
     client:
@@ -31,17 +60,6 @@ spring:
           - message-type: com.example.kafka_demo.dto.DefaultSchema
             schema-info:
               schema-type: JSON
-
-common:
-  modes:
-    producerMode: true
-    consumerMode: true
-  topic:
-    config:
-      number-of-partitions: 5
-      replication-factor: 1
-      topic-name: STRING-TOPIC2
-
 
 jasypt:
   encryptor:
@@ -53,3 +71,4 @@ jasypt:
     string-output-type: "base64"
     pool-size: 1
     key-obtention-iterations: 1000
+

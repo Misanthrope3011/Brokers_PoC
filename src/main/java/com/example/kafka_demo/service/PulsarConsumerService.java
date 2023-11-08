@@ -1,7 +1,7 @@
 package com.example.kafka_demo.service;
 
 import com.example.kafka_demo.ApplicationConstants;
-import com.example.kafka_demo.data.MainEntity;
+import com.example.kafka_demo.data.AccumulationData;
 import com.example.kafka_demo.data.ThroughputData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,7 @@ import org.apache.pulsar.shade.com.google.common.primitives.Bytes;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.pulsar.annotation.PulsarListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,13 +34,14 @@ public class PulsarConsumerService {
             subscriptionName = ApplicationConstants.SUBSCRIPTION_NAME,
             topics = "${common.topic.config.topic-name}",
             subscriptionType = SubscriptionType.Shared,
-            schemaType = SchemaType.JSON
+            schemaType = SchemaType.JSON,
+            concurrency =  "${common.topic.config.concurrency}"
     )
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ)
     public void stringTopicListener(Consumer<Bytes> consumer, Message<Bytes> msg) {
         try {
             long processingTimeMillis = System.currentTimeMillis() - msg.getPublishTime();
-            MainEntity entity = objectMapper.readValue(msg.getData(), MainEntity.class);
+            AccumulationData entity = objectMapper.readValue(msg.getData(), AccumulationData.class);
             var througputData = new ThroughputData(ThroughputData.BrokerDomain.PULSAR, processingTimeMillis);
             dataTestUtilsService.saveThroughtPutData(througputData);
             dataTestUtilsService.saveOuterEntity(entity);

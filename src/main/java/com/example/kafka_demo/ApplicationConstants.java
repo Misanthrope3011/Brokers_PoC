@@ -10,6 +10,7 @@ public class ApplicationConstants {
     public static final int PULSAR_BOOKIE_PORT = 6650;
     public static final int PULSAR_BROKER_PORT = 8080;
     public static final int DEFAULT_LOAD_SIZE = 100;
+    public static final String DEFAULT_CLUSTER_NAMESPACE = "public/default";
     public static final String DEFAULT_LOOKUP_BIND = "0.0.0.0";
     public static final String BROKERS_HOST_NAME = "localhost";
     public static final  String SUBSCRIPTION_NAME = "string-topic-subscription";

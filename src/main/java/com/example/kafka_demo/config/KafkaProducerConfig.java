@@ -16,6 +16,7 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.pulsar.core.DefaultSchemaResolver;
 import org.springframework.pulsar.core.SchemaResolver;
 
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,6 +63,7 @@ public class KafkaProducerConfig {
 
             return PulsarClient.builder()
                     .dnsLookupBind(DEFAULT_LOOKUP_BIND, 0)
+                    .maxConcurrentLookupRequests(5)
                     .serviceUrl(ApplicationConstants.BrokerServicesUrls.PULSAR_ADMIN_URL)
                     .build();
         } catch (Exception e) {
