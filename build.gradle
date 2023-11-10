@@ -52,11 +52,13 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web:"
     implementation "org.springframework.pulsar:spring-pulsar-spring-boot-starter:0.2.0"
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
-    implementation 'org.apache.kafka:kafka-clients:3.4.0'
+    implementation 'org.apache.kafka:kafka-clients:3.6.0'
     implementation("org.springframework.cloud:spring-cloud-starter-stream-rabbit:${spring_cloud_dependencies_version}")
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
     implementation "org.springframework.pulsar:spring-pulsar-spring-cloud-stream-binder:0.2.0"
+    implementation "org.springframework.cloud:spring-cloud-starter-stream-kafka:${spring_cloud_dependencies_version}"
     implementation "org.springframework.cloud:spring-cloud-stream-binder-kafka-streams:${spring_cloud_dependencies_version}"
+
 }
 
 tasks.named('test') {

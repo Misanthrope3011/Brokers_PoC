@@ -25,7 +25,7 @@ import org.springframework.pulsar.annotation.EnablePulsar;
 @EnablePulsar
 @EnableRabbit
 @RequiredArgsConstructor
-public class RabbitMQBrokerConfiguration {
+public class RabbitMQBrokerConfig {
 
     private final RabbitMQConsumerService rabbitMQConsumerService;
     private final AppConfigurationProperties appConfigProperties;

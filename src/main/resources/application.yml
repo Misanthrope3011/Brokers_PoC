@@ -9,7 +9,7 @@ common:
       number-of-partitions: 5
       replication-factor: 1
       topic-name: STRING-TOPIC2
-      concurrency: 5
+      concurrency: 2
       load-size: 0
   security:
     rabbitmq:
@@ -40,19 +40,21 @@ spring:
         bindings:
           senderMethod-out-0:
             producer:
+              partition-key-expression: headers["id"]
               partitionCount: ${common.topic.config.number-of-partitions}
             destination: ${common.topic.config.topic-name}
           consumerMethod-in-0:
             destination: ${common.topic.config.topic-name}
             consumer:
-              concurrency: 5
-        default-binder: pulsar
+              concurrency: 2
+            group: testGroup
+        default-binder: kafka
 
   jpa:
     properties:
       hibernate:
         hbm2ddl:
-          auto: create-drop
+          auto: update
       dialect: org.hibernate.dialect.PostgreSQL82Dialect
   pulsar:
     client:

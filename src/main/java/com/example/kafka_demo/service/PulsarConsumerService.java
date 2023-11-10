@@ -15,7 +15,6 @@ import org.apache.pulsar.shade.com.google.common.primitives.Bytes;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.pulsar.annotation.PulsarListener;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +36,7 @@ public class PulsarConsumerService {
             schemaType = SchemaType.JSON,
             concurrency =  "${common.topic.config.concurrency}"
     )
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public void stringTopicListener(Consumer<Bytes> consumer, Message<Bytes> msg) {
         try {
             long processingTimeMillis = System.currentTimeMillis() - msg.getPublishTime();

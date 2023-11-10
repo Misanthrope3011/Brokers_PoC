@@ -33,7 +33,7 @@ public class KafkaConsumerService {
             AccumulationData mainEntity = objectMapper.readValue(data.value().get(), AccumulationData.class);
             var throughputData = new ThroughputData(ThroughputData.BrokerDomain.KAFKA, processingTimeMillis);
             dataTestUtilsService.saveThroughtPutData(throughputData);
-            dataTestUtilsService.saveOuterEntity(mainEntity);
+//            dataTestUtilsService.saveOuterEntity(mainEntity);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

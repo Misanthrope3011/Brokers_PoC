@@ -1,6 +1,7 @@
 package com.example.kafka_demo.service;
 
-import com.example.kafka_demo.config.properties.BrokersConfigProperties;
+import com.example.kafka_demo.config.configuration.properties.BrokersConfigProperties;
+import com.example.kafka_demo.data.ThroughputData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +36,11 @@ public class ProducersService {
                 .parallelStream()
                 .forEach(message -> {
                     try {
+                        message.setBrokerDomain(ThroughputData.BrokerDomain.PULSAR);
                         pulsarProducer.newMessage().value(message).send();
+                        message.setBrokerDomain(ThroughputData.BrokerDomain.RABBITMQ);
                         rabbitTemplate.convertAndSend(brokersConfigProperties.topicName(), brokersConfigProperties.topicName(), message);
+                        message.setBrokerDomain(ThroughputData.BrokerDomain.KAFKA);
                         kafkaTemplate.send(brokersConfigProperties.topicName(), objectMapper.writeValueAsBytes(message));
                     } catch (PulsarClientException ex) {
                         throw new RuntimeException("Error while sending message via Pulsar: " + ExceptionUtils.getMessage(ex));

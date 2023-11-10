@@ -36,7 +36,7 @@ public class AccumulationData implements Serializable {
     private byte[] image;
 
     @Transient
-    private long receiveTime;
+    private ThroughputData.BrokerDomain brokerDomain;
 
 
 }

@@ -1,4 +1,4 @@
-package com.example.kafka_demo.config.properties;
+package com.example.kafka_demo.config.configuration.properties;
 
 import com.example.kafka_demo.ApplicationConstants;
 import org.springframework.boot.context.properties.ConfigurationProperties;

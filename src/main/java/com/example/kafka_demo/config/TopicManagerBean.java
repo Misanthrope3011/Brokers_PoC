@@ -52,5 +52,4 @@ public class TopicManagerBean {
         return new TopicExchange(appConfigurationProperties.getBrokerConsumerConfigs().topicName());
     }
 
-
 }

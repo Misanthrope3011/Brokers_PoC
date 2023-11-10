@@ -1,7 +1,7 @@
 package com.example.kafka_demo;
 
-import com.example.kafka_demo.config.properties.BrokersConfigProperties;
-import com.example.kafka_demo.config.properties.CredentialsConfig;
+import com.example.kafka_demo.config.configuration.properties.BrokersConfigProperties;
+import com.example.kafka_demo.config.configuration.properties.CredentialsConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

@@ -26,7 +26,7 @@ public class RabbitMQConsumerService implements MessageListener {
     private final ObjectMapper objectMapper;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public void onMessage(Message message) {
         try {
             long processingTimeMillis = System.currentTimeMillis() - message.getMessageProperties().getTimestamp().getTime();
