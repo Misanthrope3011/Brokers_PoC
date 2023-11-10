@@ -1,4 +1,4 @@
-package com.example.kafka_demo.config.properties;
+package com.example.kafka_demo.config.rabbitmq;
 
 import com.example.kafka_demo.data.AccumulationData;
 import com.example.kafka_demo.data.ThroughputData;
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
-public class PartitionedConfig {
+public class RabbitMQPartitionedConfig {
 
     private final DataTestUtilsService dataTestUtilsService;
     private final RandomDataUtils randomDataUtils;

@@ -16,11 +16,4 @@ public class CommonConfig {
         return new SecureRandom();
     }
 
-    @Bean
-    public PulsarAdmin pulsarAdmin() throws PulsarClientException {
-        return PulsarAdmin.builder()
-                .serviceHttpUrl(ApplicationConstants.BrokerServicesUrls.PULSAR_ADMIN_URL)
-                .build();
-    }
-
 }

@@ -1,5 +1,6 @@
-package com.example.kafka_demo.config;
+package com.example.kafka_demo.config.rabbitmq;
 
+import com.example.kafka_demo.config.AppConfigurationProperties;
 import com.example.kafka_demo.service.RabbitMQConsumerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Binding;
@@ -24,7 +25,7 @@ import org.springframework.pulsar.annotation.EnablePulsar;
 @EnablePulsar
 @EnableRabbit
 @RequiredArgsConstructor
-public class BrokerConsumerConfigs {
+public class RabbitMQBrokerConfiguration {
 
     private final RabbitMQConsumerService rabbitMQConsumerService;
     private final AppConfigurationProperties appConfigProperties;

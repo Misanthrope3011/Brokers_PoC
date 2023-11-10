@@ -37,7 +37,7 @@ public class PulsarConsumerService {
             schemaType = SchemaType.JSON,
             concurrency =  "${common.topic.config.concurrency}"
     )
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
     public void stringTopicListener(Consumer<Bytes> consumer, Message<Bytes> msg) {
         try {
             long processingTimeMillis = System.currentTimeMillis() - msg.getPublishTime();

@@ -68,7 +68,7 @@ public class DataTestUtilsService {
         return outerEntityRepository.save(outerEntity);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
     public void saveOuterEntityQuery(AccumulationData outerEntity) {
         AccumulationData existingEntity = outerEntityRepository.findById(outerEntity.getId()).orElse(null);
 

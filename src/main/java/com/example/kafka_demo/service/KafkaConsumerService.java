@@ -26,7 +26,7 @@ public class KafkaConsumerService {
     private final DataTestUtilsService dataTestUtilsService;
 
     @KafkaListener(topics = {"${common.topic.config.topic-name}"}, groupId = "testGroup", concurrency = "${common.topic.config.concurrency}")
-    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ)
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
     public void onMessage(ConsumerRecord<String, Bytes> data){
         try {
             long processingTimeMillis = System.currentTimeMillis() - data.timestamp();

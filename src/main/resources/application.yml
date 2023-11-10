@@ -2,7 +2,7 @@ server.port: 8081
 
 common:
   modes:
-    producerMode: true
+    producerMode: false
     consumerMode: true
   topic:
     config:
@@ -11,6 +11,10 @@ common:
       topic-name: STRING-TOPIC2
       concurrency: 5
       load-size: 0
+  security:
+    rabbitmq:
+      username: ENC(8Qe+vrYVHdWuFwDc9AQ3JWdGgsXNduzO++mFizkpXKxuQYvsdEx7trJyYxXi4sJa)
+      password: ENC(M3V25sxkmnWZDsxnfzYsxtjqCNxinboQs+mf/hNCLVXL3gwllLm7wiF43rsosiGz)
 
 spring:
   datasource:
@@ -31,20 +35,18 @@ spring:
       batch-size: 2000
   cloud:
       function:
-        definition: consumerMethod
+        definition: consumerMethod;senderMethod
       stream:
         bindings:
           senderMethod-out-0:
             producer:
-              partitionKeyExtractorName: headers.id
               partitionCount: ${common.topic.config.number-of-partitions}
             destination: ${common.topic.config.topic-name}
           consumerMethod-in-0:
             destination: ${common.topic.config.topic-name}
             consumer:
               concurrency: 5
-
-
+        default-binder: pulsar
 
   jpa:
     properties:
