@@ -44,8 +44,8 @@ public class PulsarConsumerService {
             long processingTimeMillis = System.currentTimeMillis() - msg.getPublishTime();
             AccumulationData entity = objectMapper.readValue(msg.getData(), AccumulationData.class);
             var througputData = new ThroughputData(ThroughputData.BrokerDomain.PULSAR, processingTimeMillis);
-            dataTestUtilsService.saveThroughtPutData(througputData);
-            dataTestUtilsService.saveOuterEntity(entity);
+            dataTestUtilsService.saveThroughPutData(througputData);
+            dataTestUtilsService.saveAccumulationData(entity);
         }  catch (ConstraintViolationException | DataIntegrityViolationException e) {
             log.error(ExceptionUtils.getMessage(e));
         } catch (IOException e) {

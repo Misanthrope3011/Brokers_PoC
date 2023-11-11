@@ -46,21 +46,17 @@ public class PartitionedConfig {
     }
 
     @Bean
+    @SuppressWarnings("ConstantConditions")
     public Consumer<Message<AccumulationData>> consumerMethod() {
         return (value) -> {
             long processingTime = System.currentTimeMillis();
-            switch (binder) {
-                case "kafka" -> {
-                    processingTime -= processingTime - (Long) value.getHeaders().get("kafka_receivedTimestamp");
-                }
-                case "pulsar" -> {
-                    processingTime -= (Long) value.getHeaders().get("pulsar_message_publish_time");
-                }
-                case "rabbit" -> {
-                    processingTime -= value.getHeaders().getTimestamp();
-                }
+            switch (ThroughputData.BrokerDomain.valueOf(binder)) {
+                case KAFKA -> processingTime -= processingTime - (Long) value.getHeaders().get("kafka_receivedTimestamp");
+                case PULSAR -> processingTime -= (Long) value.getHeaders().get("pulsar_message_publish_time");
+                case RABBIT -> processingTime -= value.getHeaders().getTimestamp();
+
             }
-            dataTestUtilsService.saveThroughtPutData(new ThroughputData(ThroughputData.BrokerDomain.valueOf(binder.toUpperCase().concat(PARTITIONED_SUFFIX)), processingTime));
+            dataTestUtilsService.saveThroughPutData(new ThroughputData(ThroughputData.BrokerDomain.valueOf(binder.toUpperCase().concat(PARTITIONED_SUFFIX)), processingTime));
         };
     }
 

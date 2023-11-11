@@ -38,7 +38,7 @@ public class ProducersService {
                     try {
                         message.setBrokerDomain(ThroughputData.BrokerDomain.PULSAR);
                         pulsarProducer.newMessage().value(message).send();
-                        message.setBrokerDomain(ThroughputData.BrokerDomain.RABBITMQ);
+                        message.setBrokerDomain(ThroughputData.BrokerDomain.RABBIT);
                         rabbitTemplate.convertAndSend(brokersConfigProperties.topicName(), brokersConfigProperties.topicName(), message);
                         message.setBrokerDomain(ThroughputData.BrokerDomain.KAFKA);
                         kafkaTemplate.send(brokersConfigProperties.topicName(), objectMapper.writeValueAsBytes(message));

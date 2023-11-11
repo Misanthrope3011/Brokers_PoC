@@ -38,7 +38,7 @@ public class ThroughputData {
         KAFKA_PARTITIONED("kafka_partitioned"),
         PULSAR_PARTITIONED("pulsar_partitioned"),
         PULSAR("pulsar"),
-        RABBITMQ("rabbitmq");
+        RABBIT("rabbitmq");
         private final String name;
 
         BrokerDomain(String name) {

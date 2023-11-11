@@ -30,6 +30,6 @@ public class NestedEntityInfo implements Serializable {
     private AccumulationData outerEntity;
 
     @Column(name = "ETI_AUDIT_RD")
-    private LocalDateTime auditRemove;
+    private LocalDateTime auditRemoveDate;
 
 }

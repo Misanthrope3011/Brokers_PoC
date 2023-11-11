@@ -40,18 +40,18 @@ public class DataTestUtilsService {
         throughputDataRepository.deleteAll();
     }
 
-    public void saveThroughtPutData(ThroughputData throughputData) {
+    public void saveThroughPutData(ThroughputData throughputData) {
         throughputDataRepository.save(throughputData);
     }
 
-    public AccumulationData saveOuterEntity(AccumulationData outerEntity) {
+    public AccumulationData saveAccumulationData(AccumulationData outerEntity) {
         if (outerEntity.getId() != null) {
             Optional<AccumulationData> existingEntity = outerEntityRepository.findById(outerEntity.getId());
 
             if (existingEntity.isPresent() && !existingEntity.get().getSubEntities1().isEmpty()) {
                 for (NestedEntityInfo existingSubEntity : existingEntity.get().getSubEntities1()) {
                     if (outerEntity.getSubEntities1().stream().noneMatch(entity -> existingSubEntity.getId().equals(entity.getId()))) {
-                        existingSubEntity.setAuditRemove(LocalDateTime.now());
+                        existingSubEntity.setAuditRemoveDate(LocalDateTime.now());
                         outerEntity.getSubEntities1().add(existingSubEntity);
                     }
                 }
