@@ -38,5 +38,4 @@ public class AccumulationData implements Serializable {
     @Transient
     private ThroughputData.BrokerDomain brokerDomain;
 
-
 }

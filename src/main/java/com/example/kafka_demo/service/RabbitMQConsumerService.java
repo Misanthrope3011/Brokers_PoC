@@ -3,14 +3,15 @@ package com.example.kafka_demo.service;
 import com.example.kafka_demo.data.AccumulationData;
 import com.example.kafka_demo.data.ThroughputData;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,7 @@ import java.io.IOException;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "common.modes.consumerMode", havingValue = "true")
+@ConditionalOnExpression(value = "${common.modes.consumerMode} eq true and ${common.modes.partitioned} eq false ")
 public class RabbitMQConsumerService implements MessageListener {
 
     private final DataTestUtilsService dataTestUtilsService;
@@ -34,8 +35,10 @@ public class RabbitMQConsumerService implements MessageListener {
             var throughputData = new ThroughputData(ThroughputData.BrokerDomain.RABBITMQ, processingTimeMillis);
             dataTestUtilsService.saveThroughtPutData(throughputData);
             dataTestUtilsService.saveOuterEntity(mainEntity);
+        }  catch (ConstraintViolationException | DataIntegrityViolationException e) {
+            log.error(ExceptionUtils.getMessage(e));
         } catch (IOException e) {
-            log.error("Exception during deserializing message " + ExceptionUtils.getMessage(e));
+            throw new RuntimeException(e);
         }
     }
 

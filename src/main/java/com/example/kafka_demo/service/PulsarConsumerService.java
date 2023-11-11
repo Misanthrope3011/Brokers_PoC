@@ -4,6 +4,7 @@ import com.example.kafka_demo.ApplicationConstants;
 import com.example.kafka_demo.data.AccumulationData;
 import com.example.kafka_demo.data.ThroughputData;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -12,7 +13,8 @@ import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.SubscriptionType;
 import org.apache.pulsar.common.schema.SchemaType;
 import org.apache.pulsar.shade.com.google.common.primitives.Bytes;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.pulsar.annotation.PulsarListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,7 +25,7 @@ import java.io.IOException;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "common.modes.consumerMode", havingValue = "true")
+@ConditionalOnExpression(value = "${common.modes.consumerMode} eq true and ${common.modes.partitioned} eq false ")
 public class PulsarConsumerService {
 
     private final ObjectMapper objectMapper;
@@ -44,8 +46,10 @@ public class PulsarConsumerService {
             var througputData = new ThroughputData(ThroughputData.BrokerDomain.PULSAR, processingTimeMillis);
             dataTestUtilsService.saveThroughtPutData(througputData);
             dataTestUtilsService.saveOuterEntity(entity);
-        } catch (IOException ex) {
-            log.error("Exception during deserializing message : ".concat(ExceptionUtils.getMessage(ex)));
+        }  catch (ConstraintViolationException | DataIntegrityViolationException e) {
+            log.error(ExceptionUtils.getMessage(e));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

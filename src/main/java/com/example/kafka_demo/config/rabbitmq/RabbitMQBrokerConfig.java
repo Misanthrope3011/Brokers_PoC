@@ -15,6 +15,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -27,7 +28,6 @@ import org.springframework.pulsar.annotation.EnablePulsar;
 @RequiredArgsConstructor
 public class RabbitMQBrokerConfig {
 
-    private final RabbitMQConsumerService rabbitMQConsumerService;
     private final AppConfigurationProperties appConfigProperties;
 
     @Bean
@@ -45,7 +45,8 @@ public class RabbitMQBrokerConfig {
     }
 
     @Bean
-    public SimpleMessageListenerContainer listenerContainer() {
+    @ConditionalOnExpression(value = "${common.modes.consumerMode} eq true and ${common.modes.partitioned} eq false ")
+    public SimpleMessageListenerContainer listenerContainer(RabbitMQConsumerService rabbitMQConsumerService) {
         var container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory());
         container.setQueues(queue());

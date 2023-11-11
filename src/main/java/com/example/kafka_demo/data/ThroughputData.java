@@ -34,7 +34,7 @@ public class ThroughputData {
     @Getter
     public enum BrokerDomain {
         KAFKA("kafka"),
-        RABBITMQ_PARTITIONED("rabbitmq_partitioned"),
+        RABBIT_PARTITIONED("rabbitmq_partitioned"),
         KAFKA_PARTITIONED("kafka_partitioned"),
         PULSAR_PARTITIONED("pulsar_partitioned"),
         PULSAR("pulsar"),
