@@ -47,9 +47,9 @@ spring:
           consumerMethod-in-0:
             destination: ${common.topic.config.topic-name}
             consumer:
-              concurrency: 2
+              concurrency: ${common.topic.config.concurrency}
             group: testGroup
-        default-binder: rabbit
+        default-binder: kafka
 
   jpa:
     properties:
