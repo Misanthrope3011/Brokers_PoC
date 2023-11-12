@@ -12,6 +12,8 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.LongStream;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -22,49 +24,51 @@ public class RandomDataUtils {
     private final RandomDataProperties randomDataProperties;
 
     public List<AccumulationData> generateRandomData(long size) {
-        var entityList = new ArrayList<AccumulationData>();
         var byteImage = new byte[randomDataProperties.imageSizeBytes()];
-
+        var atomicInteger = new AtomicInteger();
         int subEntityArraySize = secureRandom.nextInt(3);
 
-        for(int i = 0; i < size; i++) {
-            var nestedEntityInfos = new ArrayList<NestedEntityInfo>();
-            var nestedEntityInfos2 = new ArrayList<NestedEntityInfo2>();
-            double progress = Double.parseDouble(String.format("%.3f", (double) i / (size)));
-            synchronized(this) {
-                if (Double.parseDouble(String.format("%.3f", progress * 100)) % 1 == 0) {
-                    log.info("Waiting to initialize data: Progress : ".concat(String.format("%.0f", progress * 100)).concat("%"));
-                }
+        return LongStream.range(0, size).boxed().parallel()
+                .map(value -> createAccumulationData(size, atomicInteger, subEntityArraySize, byteImage))
+                .toList();
+    }
+
+    private AccumulationData createAccumulationData(long size, AtomicInteger atomicInteger, int subEntityArraySize, byte[] byteImage) {
+        var nestedEntityInfos = new ArrayList<NestedEntityInfo>();
+        var nestedEntityInfos2 = new ArrayList<NestedEntityInfo2>();
+        synchronized (this) {
+            atomicInteger.incrementAndGet();
+            double progress = Double.parseDouble(String.format("%.3f", (double) atomicInteger.get() / size));
+            if (Double.parseDouble(String.format("%.3f", progress * 100)) % 1 == 0) {
+                log.info("Waiting to initialize data: Progress : ".concat(String.format("%.0f", progress * 100)).concat("%"));
             }
-            for(int j = 0; j < subEntityArraySize; j++) {
-                secureRandom.nextBytes(byteImage);
-
-                var nestedEntityInfo1 = new NestedEntityInfo();
-                nestedEntityInfo1 = NestedEntityInfo.builder()
-                        .name(generateString(randomDataProperties.nameSizeBytes()))
-                        .build();
-                var nestedEntityInfo2 = new NestedEntityInfo2();
-                nestedEntityInfo2 = NestedEntityInfo2.builder()
-                        .description(generateString(randomDataProperties.descSizeBytes()))
-                        .build();
-                nestedEntityInfos.add(nestedEntityInfo1);
-                nestedEntityInfos2.add(nestedEntityInfo2);
-            }
-
-            AccumulationData entity;
-            entity = AccumulationData.builder()
-                    .id(secureRandom.nextLong(10000))
-                    .image(byteImage)
-                    .desc(generateString(randomDataProperties.descSizeBytes()))
-                    .subEntities1(nestedEntityInfos)
-                    .subEntities2(nestedEntityInfos2)
-                    .build();
-
-            entityList.add(entity);
         }
 
+        for (int j = 0; j < subEntityArraySize; j++) {
+            secureRandom.nextBytes(byteImage);
 
-        return entityList;
+            var nestedEntityInfo1 = new NestedEntityInfo();
+            nestedEntityInfo1 = NestedEntityInfo.builder()
+                    .name(generateString(randomDataProperties.nameSizeBytes()))
+                    .build();
+            var nestedEntityInfo2 = new NestedEntityInfo2();
+            nestedEntityInfo2 = NestedEntityInfo2.builder()
+                    .description(generateString(randomDataProperties.descSizeBytes()))
+                    .build();
+            nestedEntityInfos.add(nestedEntityInfo1);
+            nestedEntityInfos2.add(nestedEntityInfo2);
+        }
+
+        AccumulationData entity;
+        entity = AccumulationData.builder()
+                .id(secureRandom.nextLong(10000))
+                .image(byteImage)
+                .desc(generateString(randomDataProperties.descSizeBytes()))
+                .subEntities1(nestedEntityInfos)
+                .subEntities2(nestedEntityInfos2)
+                .build();
+
+        return entity;
     }
 
     public String generateString(int targetStringLength) {

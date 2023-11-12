@@ -36,11 +36,8 @@ public class ProducersService {
                 .parallelStream()
                 .forEach(message -> {
                     try {
-                        message.setBrokerDomain(ThroughputData.BrokerDomain.PULSAR);
                         pulsarProducer.newMessage().value(message).send();
-                        message.setBrokerDomain(ThroughputData.BrokerDomain.RABBIT);
                         rabbitTemplate.convertAndSend(brokersConfigProperties.topicName(), brokersConfigProperties.topicName(), message);
-                        message.setBrokerDomain(ThroughputData.BrokerDomain.KAFKA);
                         kafkaTemplate.send(brokersConfigProperties.topicName(), objectMapper.writeValueAsBytes(message));
                     } catch (PulsarClientException ex) {
                         throw new RuntimeException("Error while sending message via Pulsar: " + ExceptionUtils.getMessage(ex));

@@ -34,9 +34,7 @@ public class KafkaConsumerService {
         try {
             long processingTimeMillis = System.currentTimeMillis() - data.timestamp();
             AccumulationData mainEntity = objectMapper.readValue(data.value().get(), AccumulationData.class);
-            var throughputData = new ThroughputData(ThroughputData.BrokerDomain.KAFKA, processingTimeMillis);
-            dataTestUtilsService.saveThroughPutData(throughputData);
-            dataTestUtilsService.saveAccumulationData(mainEntity);
+            dataTestUtilsService.saveProcessingData(ThroughputData.BrokerDomain.KAFKA, processingTimeMillis, mainEntity);
         } catch (ConstraintViolationException | DataIntegrityViolationException | KafkaException e) {
             log.error(ExceptionUtils.getMessage(e));
         } catch (IOException e) {

@@ -32,9 +32,7 @@ public class RabbitMQConsumerService implements MessageListener {
         try {
             long processingTimeMillis = System.currentTimeMillis() - message.getMessageProperties().getTimestamp().getTime();
             var mainEntity = objectMapper.readValue(message.getBody(), AccumulationData.class);
-            var throughputData = new ThroughputData(ThroughputData.BrokerDomain.RABBIT, processingTimeMillis);
-            dataTestUtilsService.saveThroughPutData(throughputData);
-            dataTestUtilsService.saveAccumulationData(mainEntity);
+            dataTestUtilsService.saveProcessingData(ThroughputData.BrokerDomain.RABBIT, processingTimeMillis, mainEntity);
         }  catch (ConstraintViolationException | DataIntegrityViolationException e) {
             log.error(ExceptionUtils.getMessage(e));
         } catch (IOException e) {
