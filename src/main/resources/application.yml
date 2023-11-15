@@ -11,7 +11,8 @@ common:
       replication-factor: 1
       topic-name: STRING-TOPIC2
       concurrency: 1
-      load-size: 0
+      load-size: 10000
+      truncate-on-startup: false
   security:
     rabbitmq:
       username: ENC(8Qe+vrYVHdWuFwDc9AQ3JWdGgsXNduzO++mFizkpXKxuQYvsdEx7trJyYxXi4sJa)
@@ -23,6 +24,7 @@ common:
       sub-entity-array-size: 4
       image-size-bytes: 10000
       persistable: false
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/kafka_db

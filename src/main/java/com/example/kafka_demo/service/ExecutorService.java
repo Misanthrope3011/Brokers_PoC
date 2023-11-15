@@ -10,11 +10,15 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import static com.example.kafka_demo.ApplicationConstants.THREAD_POOL;
+
 @Getter
 @Service
 public class ExecutorService implements Executor<List<AccumulationData>> {
 
-    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(5);
+    private final ScheduledExecutorService executorService =  Executors.newScheduledThreadPool(THREAD_POOL);
+
+
 
     @Override
     public List<AccumulationData> execute(Callable<List<AccumulationData>> method) throws ExecutionException, InterruptedException {

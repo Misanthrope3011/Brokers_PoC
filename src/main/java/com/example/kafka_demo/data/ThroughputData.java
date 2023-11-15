@@ -31,6 +31,9 @@ public class ThroughputData {
     @Column(name = "TRD_AUDIT_CD")
     private LocalDateTime localDateTime = LocalDateTime.now();
 
+    @Column(name = "TRD_LOAD_SIZE")
+    private long loadSize;
+
     @Getter
     public enum BrokerDomain {
         KAFKA("kafka"),
@@ -55,6 +58,5 @@ public class ThroughputData {
         this.brokerDomain = brokerDomain;
         this.processingTimeMillis = processingTimeMillis;
     }
-
 
 }

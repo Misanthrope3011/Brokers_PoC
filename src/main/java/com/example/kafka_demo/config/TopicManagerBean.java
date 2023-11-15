@@ -29,7 +29,9 @@ public class TopicManagerBean {
         createKafkaTopic();
         Policies policies = pulsarAdmin.namespaces().getPolicies(DEFAULT_CLUSTER_NAMESPACE);
         policies.replication_clusters.clear();
-        policies.replication_clusters.add(DEFAULT_CLUSTER_NAMESPACE);
+        for(short i = 0;  i < appConfigurationProperties.getBrokerConsumerConfigs().replicationFactor(); i++) {
+            policies.replication_clusters.add(DEFAULT_CLUSTER_NAMESPACE.concat(String.valueOf(i)));
+        }
     }
 
     private void createKafkaTopic() {

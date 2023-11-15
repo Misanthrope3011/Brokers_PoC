@@ -31,7 +31,9 @@ public class ProducersService {
 
     @EventListener(ApplicationReadyEvent.class)
     void init() throws Exception {
-        dataTestUtilsService.truncate();
+        if(brokersConfigProperties.truncateOnStartup()) {
+            dataTestUtilsService.truncate();
+        }
         dataTestUtilsService.loadData(brokersConfigProperties.loadSize())
                 .parallelStream()
                 .forEach(message -> {

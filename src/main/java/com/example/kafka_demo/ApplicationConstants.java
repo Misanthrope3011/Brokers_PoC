@@ -15,6 +15,7 @@ public class ApplicationConstants {
     public static final String BROKERS_HOST_NAME = "localhost";
     public static final  String SUBSCRIPTION_NAME = "string-topic-subscription";
     public static final String HTTP = "http";
+    public static final int THREAD_POOL = 5;
 
 
     @Getter
