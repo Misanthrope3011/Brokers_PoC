@@ -2,10 +2,7 @@ package com.example.kafka_demo.service;
 
 import com.example.kafka_demo.config.configuration.properties.BrokersConfigProperties;
 import com.example.kafka_demo.config.configuration.properties.RandomDataProperties;
-import com.example.kafka_demo.data.AccumulationData;
-import com.example.kafka_demo.data.NestedEntityInfo;
-import com.example.kafka_demo.data.NestedEntityInfo2;
-import com.example.kafka_demo.data.ThroughputData;
+import com.example.kafka_demo.data.*;
 import com.example.kafka_demo.repository.MainEntityRepository;
 import com.example.kafka_demo.repository.ThroughputDataRepository;
 import com.example.kafka_demo.utils.RandomDataUtils;
@@ -35,6 +32,7 @@ public class DataTestUtilsService {
     private final ExecutorService executorService;
     private final BrokersConfigProperties brokersConfigProperties;
     private final RandomDataProperties randomDataProperties;
+    private final BrokerConfigurationData brokerConfigurationData;
 
     public List<AccumulationData> loadData(long size) throws ExecutionException, InterruptedException {
        return executorService.execute(() -> randomDataUtils.generateRandomData(size));
@@ -53,7 +51,7 @@ public class DataTestUtilsService {
     }
 
     public void saveThroughPutData(ThroughputData throughputData) {
-        throughputData.setLoadSize(brokersConfigProperties.loadSize());
+        throughputData.setBrokerConfigurationData(brokerConfigurationData);
         throughputDataRepository.save(throughputData);
     }
 

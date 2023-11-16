@@ -50,7 +50,7 @@ public class RabbitMQBrokerConfig {
         var container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory());
         container.setQueues(queue());
-        container.setConcurrency(appConfigProperties.getBrokerConsumerConfigs().concurrency());
+        container.setConcurrency(String.valueOf(appConfigProperties.getBrokerConsumerConfigs().concurrency()));
         container.setMessageListener(rabbitMQConsumerService);
         return container;
     }

@@ -31,8 +31,9 @@ public class ThroughputData {
     @Column(name = "TRD_AUDIT_CD")
     private LocalDateTime localDateTime = LocalDateTime.now();
 
-    @Column(name = "TRD_LOAD_SIZE")
-    private long loadSize;
+    @ManyToOne
+    @JoinColumn(name = "TRD_BCD_ID")
+    private BrokerConfigurationData brokerConfigurationData;
 
     @Getter
     public enum BrokerDomain {

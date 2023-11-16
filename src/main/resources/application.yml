@@ -9,9 +9,9 @@ common:
     config:
       number-of-partitions: 5
       replication-factor: 1
-      topic-name: STRING-TOPIC2
+      topic-name: STRING-TOPIC5
       concurrency: 1
-      load-size: 10000
+      load-size: 1000
       truncate-on-startup: false
   security:
     rabbitmq:
