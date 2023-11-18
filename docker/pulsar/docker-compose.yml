@@ -1,7 +1,7 @@
 version: '3'
 networks:
-  pulsar:
-    driver: bridge
+  brokers_app_network:
+    external: true
 services:
   # Start zookeeper
   zookeeper:
@@ -9,7 +9,7 @@ services:
     container_name: zookeeper
     restart: on-failure
     networks:
-      - pulsar
+      - brokers_app_network
     volumes:
       - ./data/zookeeper:/home/user/pulsar/zookeeper
     environment:
@@ -38,7 +38,8 @@ services:
     hostname: pulsar-init
     image: apachepulsar/pulsar:3.1.1
     networks:
-      - pulsar
+      - brokers_app_network
+
     command: >
       bin/pulsar initialize-cluster-metadata \
                --cluster cluster-a \
@@ -53,7 +54,7 @@ services:
     container_name: bookie
     restart: on-failure
     networks:
-      - pulsar
+      - brokers_app_network
     environment:
       - clusterName=cluster-a
       - zkServers=zookeeper:2181
@@ -79,7 +80,7 @@ services:
     hostname: broker
     restart: on-failure
     networks:
-      - pulsar
+      - brokers_app_network
     environment:
       - metadataStoreUrl=zk:zookeeper:2181
       - zookeeperServers=zookeeper:2181
@@ -99,3 +100,4 @@ services:
       - "6650:6650"
       - "8080:8080"
     command: bash -c "bin/apply-config-from-env.py conf/broker.conf && exec bin/pulsar broker"
+
