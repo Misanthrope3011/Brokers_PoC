@@ -26,11 +26,11 @@ public class AccumulationData implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "outer_entity_id")
-    private List<NestedEntityInfo> subEntities1;
+    private List<SubEntityTestData> subEntities1;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "outer_entity_id2")
-    private List<NestedEntityInfo2> subEntities2;
+    private List<SubEntityTestData2> subEntities2;
 
     @Column(name = "ETB_IMAGE")
     private byte[] image;

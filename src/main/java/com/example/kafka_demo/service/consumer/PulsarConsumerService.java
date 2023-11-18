@@ -1,9 +1,10 @@
-package com.example.kafka_demo.service;
+package com.example.kafka_demo.service.consumer;
 
 import com.example.kafka_demo.ApplicationConstants;
 import com.example.kafka_demo.ApplicationException;
 import com.example.kafka_demo.data.AccumulationData;
 import com.example.kafka_demo.data.ThroughputData;
+import com.example.kafka_demo.service.DataTestUtilsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;

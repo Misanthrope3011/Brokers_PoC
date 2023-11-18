@@ -1,8 +1,8 @@
 package com.example.kafka_demo.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.pulsar.shade.com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -10,26 +10,26 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @Builder
-@Table(name = "SUB_ENTITY_TABLE")
+@AllArgsConstructor
+@Table(name = "SUB_ENTITY_TABLE2")
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class NestedEntityInfo implements Serializable {
+public class SubEntityTestData2 implements Serializable {
 
     @Id
+    @Column(name = "ETI2_ID")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ETI_ID")
     private Long id;
 
-    @Column(name = "ETI_NAME", length = 1000)
-    private String name;
+    @Column(name = "ETI2_DESC", length = 1000)
+    private String description;
 
     @ManyToOne
-    @JoinColumn(name = "ETI_ETB_ID")
+    @JoinColumn(name = "ETI2_ETB_ID")
     private AccumulationData outerEntity;
 
-    @Column(name = "ETI_AUDIT_RD")
+    @Column(name = "ETI2_AUDIT_RD")
     private LocalDateTime auditRemoveDate;
 
 }

@@ -1,8 +1,8 @@
 package com.example.kafka_demo.service.utils;
 
 import com.example.kafka_demo.data.AccumulationData;
-import com.example.kafka_demo.data.NestedEntityInfo;
-import com.example.kafka_demo.data.NestedEntityInfo2;
+import com.example.kafka_demo.data.SubEntityTestData;
+import com.example.kafka_demo.data.SubEntityTestData2;
 import com.example.kafka_demo.data.ThroughputData;
 
 import java.util.Collections;
@@ -24,11 +24,11 @@ public class DateTestUtils {
     }
 
     protected static AccumulationData prepareObjectWithNonExistingSubObjects() {
-        NestedEntityInfo nestedEntityInfo = NestedEntityInfo.builder()
+        SubEntityTestData nestedEntityInfo = SubEntityTestData.builder()
                 .id(23L)
                 .name("sample")
                 .build();
-        NestedEntityInfo2 nestedEntityInfo2 = NestedEntityInfo2.builder()
+        SubEntityTestData2 nestedEntityInfo2 = SubEntityTestData2.builder()
                 .id(34L)
                 .description("sample234")
                 .build();
@@ -44,11 +44,11 @@ public class DateTestUtils {
 
 
     protected static AccumulationData prepareObjectWithExistingSubObjects() {
-        NestedEntityInfo nestedEntityInfo = NestedEntityInfo.builder()
+        SubEntityTestData nestedEntityInfo = SubEntityTestData.builder()
                 .id(145L)
                 .name("sample")
                 .build();
-        NestedEntityInfo2 nestedEntityInfo2 = NestedEntityInfo2.builder()
+        SubEntityTestData2 nestedEntityInfo2 = SubEntityTestData2.builder()
                 .id(43L)
                 .description("sample234")
                 .build();

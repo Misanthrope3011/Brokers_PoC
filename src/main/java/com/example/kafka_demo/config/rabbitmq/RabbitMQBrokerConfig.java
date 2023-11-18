@@ -2,7 +2,7 @@ package com.example.kafka_demo.config.rabbitmq;
 
 import com.example.kafka_demo.ApplicationConstants;
 import com.example.kafka_demo.config.AppConfigurationProperties;
-import com.example.kafka_demo.service.RabbitMQConsumerService;
+import com.example.kafka_demo.service.consumer.RabbitMQConsumerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;

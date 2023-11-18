@@ -60,7 +60,7 @@ public class DataTestUtilsService {
             Optional<AccumulationData> existingEntity = outerEntityRepository.findById(outerEntity.getId());
 
             if (existingEntity.isPresent() && !existingEntity.get().getSubEntities1().isEmpty()) {
-                for (NestedEntityInfo existingSubEntity : existingEntity.get().getSubEntities1()) {
+                for (SubEntityTestData existingSubEntity : existingEntity.get().getSubEntities1()) {
                     if (outerEntity.getSubEntities1().stream().noneMatch(entity -> existingSubEntity.getId().equals(entity.getId()))) {
                         existingSubEntity.setAuditRemoveDate(LocalDateTime.now());
                         outerEntity.getSubEntities1().add(existingSubEntity);
@@ -68,7 +68,7 @@ public class DataTestUtilsService {
                 }
             }
             if (existingEntity.isPresent() && !existingEntity.get().getSubEntities1().isEmpty()) {
-                for (NestedEntityInfo2 existingSubEntity : existingEntity.get().getSubEntities2()) {
+                for (SubEntityTestData2 existingSubEntity : existingEntity.get().getSubEntities2()) {
                     if (outerEntity.getSubEntities2().stream().noneMatch(entity -> existingSubEntity.getId().equals(entity.getId()))) {
                         existingSubEntity.setAuditRemoveDate(LocalDateTime.now());
                         outerEntity.getSubEntities2().add(existingSubEntity);
@@ -93,10 +93,10 @@ public class DataTestUtilsService {
         query2.setParameter("id", outerEntity.getId());
         query.setParameter("id", outerEntity.getId());
         List<Long> childIds = outerEntity.getSubEntities1().stream()
-                .map(NestedEntityInfo::getId)
+                .map(SubEntityTestData::getId)
                 .toList();
         List<Long> childIds2 = outerEntity.getSubEntities2().stream()
-                .map(NestedEntityInfo2::getId)
+                .map(SubEntityTestData2::getId)
                 .toList();
         query.setParameter("items", childIds);
         query2.setParameter("items", childIds2);

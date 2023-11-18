@@ -1,7 +1,8 @@
-package com.example.kafka_demo.service;
+package com.example.kafka_demo.service.producer;
 
 import com.example.kafka_demo.ApplicationException;
 import com.example.kafka_demo.config.configuration.properties.BrokersConfigProperties;
+import com.example.kafka_demo.service.DataTestUtilsService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

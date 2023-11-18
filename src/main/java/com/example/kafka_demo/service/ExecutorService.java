@@ -19,7 +19,6 @@ public class ExecutorService implements Executor<List<AccumulationData>> {
     private final ScheduledExecutorService executorService =  Executors.newScheduledThreadPool(THREAD_POOL);
 
 
-
     @Override
     public List<AccumulationData> execute(Callable<List<AccumulationData>> method) throws ExecutionException, InterruptedException {
         return executorService.submit(method).get();

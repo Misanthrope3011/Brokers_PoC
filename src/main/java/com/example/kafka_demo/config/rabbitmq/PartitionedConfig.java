@@ -33,12 +33,13 @@ public class PartitionedConfig {
     private String binder;
 
     @Bean
-    @SuppressWarnings("unchecked")
     public Supplier<Flux<Message<AccumulationData>>> senderMethod() {
         List<AccumulationData> entity = randomDataUtils.generateRandomData(1L);
-        entity.forEach(var -> var.setBrokerDomain(ThroughputData.BrokerDomain.valueOf(binder.toUpperCase().concat(PARTITIONED_SUFFIX.toUpperCase()))));
+        entity.forEach(var -> var.setBrokerDomain(ThroughputData.BrokerDomain.valueOf(binder.toUpperCase().concat(PARTITIONED_SUFFIX))));
 
-        return () -> Flux.interval(Duration.ofMillis(1)).map(tick -> {
+        return () -> Flux.interval(Duration.ofMillis(1))
+                .onBackpressureDrop()
+                .map(tick -> {
             return MessageBuilder
                     .withPayload(entity.get(0))
                     .build();

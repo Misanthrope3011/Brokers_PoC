@@ -2,8 +2,8 @@ package com.example.kafka_demo.utils;
 
 import com.example.kafka_demo.config.configuration.properties.RandomDataProperties;
 import com.example.kafka_demo.data.AccumulationData;
-import com.example.kafka_demo.data.NestedEntityInfo;
-import com.example.kafka_demo.data.NestedEntityInfo2;
+import com.example.kafka_demo.data.SubEntityTestData;
+import com.example.kafka_demo.data.SubEntityTestData2;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +36,8 @@ public class RandomDataUtils {
     }
 
     private AccumulationData createAccumulationData(long size, AtomicInteger atomicInteger, int subEntityArraySize, byte[] byteImage) {
-        var nestedEntityInfos = new ArrayList<NestedEntityInfo>();
-        var nestedEntityInfos2 = new ArrayList<NestedEntityInfo2>();
+        var nestedEntityInfos = new ArrayList<SubEntityTestData>();
+        var nestedEntityInfos2 = new ArrayList<SubEntityTestData2>();
         synchronized (monitor) {
             atomicInteger.incrementAndGet();
             double progress = Double.parseDouble(String.format("%.8f", (double) atomicInteger.get() / size));
@@ -47,20 +47,13 @@ public class RandomDataUtils {
         }
 
         for (int j = 0; j < subEntityArraySize; j++) {
-            secureRandom.nextBytes(byteImage);
-
-            var nestedEntityInfo1 = new NestedEntityInfo();
-            nestedEntityInfo1 = NestedEntityInfo.builder()
-                    .name(generateString(randomDataProperties.nameSizeBytes()))
-                    .build();
-            var nestedEntityInfo2 = new NestedEntityInfo2();
-            nestedEntityInfo2 = NestedEntityInfo2.builder()
-                    .description(generateString(randomDataProperties.descSizeBytes()))
-                    .build();
-            nestedEntityInfos.add(nestedEntityInfo1);
-            nestedEntityInfos2.add(nestedEntityInfo2);
+            generateSubEntitiesData(byteImage, nestedEntityInfos, nestedEntityInfos2);
         }
 
+        return generateMainEntityData(byteImage, nestedEntityInfos, nestedEntityInfos2);
+    }
+
+    private AccumulationData generateMainEntityData(byte[] byteImage, ArrayList<SubEntityTestData> nestedEntityInfos, ArrayList<SubEntityTestData2> nestedEntityInfos2) {
         AccumulationData entity;
         entity = AccumulationData.builder()
                 .id(secureRandom.nextLong(10000))
@@ -69,8 +62,21 @@ public class RandomDataUtils {
                 .subEntities1(nestedEntityInfos)
                 .subEntities2(nestedEntityInfos2)
                 .build();
-
         return entity;
+    }
+
+    private void generateSubEntitiesData(byte[] byteImage, ArrayList<SubEntityTestData> nestedEntityInfos, ArrayList<SubEntityTestData2> nestedEntityInfos2) {
+        secureRandom.nextBytes(byteImage);
+        var nestedEntityInfo1 = new SubEntityTestData();
+        nestedEntityInfo1 = SubEntityTestData.builder()
+                .name(generateString(randomDataProperties.nameSizeBytes()))
+                .build();
+        var nestedEntityInfo2 = new SubEntityTestData2();
+        nestedEntityInfo2 = SubEntityTestData2.builder()
+                .description(generateString(randomDataProperties.descSizeBytes()))
+                .build();
+        nestedEntityInfos.add(nestedEntityInfo1);
+        nestedEntityInfos2.add(nestedEntityInfo2);
     }
 
     public String generateString(int targetStringLength) {
