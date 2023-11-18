@@ -27,11 +27,9 @@ public class NestedEntityInfo2 implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "ETI2_ETB_ID")
-    private MainEntity outerEntity;
+    private AccumulationData outerEntity;
 
     @Column(name = "ETI2_AUDIT_RD")
     private LocalDateTime auditRemoveDate;
-
-    // Other fields, getters, and setters
 
 }

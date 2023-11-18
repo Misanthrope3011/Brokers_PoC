@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MainEntity implements Serializable {
+public class AccumulationData implements Serializable {
 
     @Id
     @Column(name = "ETB_ID")
@@ -35,5 +35,7 @@ public class MainEntity implements Serializable {
     @Column(name = "ETB_IMAGE")
     private byte[] image;
 
+    @Transient
+    private ThroughputData.BrokerDomain brokerDomain;
 
 }

@@ -1,42 +1,55 @@
 package com.example.kafka_demo.service;
 
-import com.example.kafka_demo.data.MainEntity;
-import com.example.kafka_demo.data.ThrougputData;
+import com.example.kafka_demo.ApplicationException;
+import com.example.kafka_demo.data.AccumulationData;
+import com.example.kafka_demo.data.ThroughputData;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.KafkaException;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.utils.Bytes;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.listener.ConsumerSeekAware;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.Map;
 
-@Slf4j
+import static com.example.kafka_demo.utils.CommonAppUtils.logException;
+
 @Service
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "consumerMode", havingValue = "true")
-public class KafkaConsumerService {
+@ConditionalOnExpression(value = "${common.modes.consumerMode} eq true and ${common.modes.partitioned} eq false ")
+public class KafkaConsumerService implements ConsumerSeekAware {
 
     private final ObjectMapper objectMapper;
     private final DataTestUtilsService dataTestUtilsService;
 
-    @KafkaListener(topics = {"example-events"}, groupId = "xddd")
+    @KafkaListener(topics = {"${common.topic.config.topic-name}"}, groupId = "testGroup", concurrency = "${common.topic.config.concurrency}")
     @Transactional(propagation = Propagation.REQUIRED)
     public void onMessage(ConsumerRecord<String, Bytes> data){
         try {
             long processingTimeMillis = System.currentTimeMillis() - data.timestamp();
-            MainEntity mainEntity = objectMapper.readValue(data.value().get(), MainEntity.class);
-            var througputData = new ThrougputData(ThrougputData.BrokerDomain.KAFKA, processingTimeMillis);
-            dataTestUtilsService.saveThroughtPutData(througputData);
-            dataTestUtilsService.saveOuterEntity(mainEntity);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            AccumulationData mainEntity = objectMapper.readValue(data.value().get(), AccumulationData.class);
+            dataTestUtilsService.saveProcessingData(ThroughputData.BrokerDomain.KAFKA, processingTimeMillis, mainEntity);
+        } catch (ConstraintViolationException | DataIntegrityViolationException e) {
+            logException(e);
+        } catch (IOException | KafkaException e) {
+            throw new ApplicationException(e);
         }
 
+    }
+
+    @Override
+    public void onPartitionsAssigned(Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
+        assignments.forEach((topic, action) -> callback.seekToEnd(topic.topic(), topic.partition()));
+        ConsumerSeekAware.super.onPartitionsAssigned(assignments, callback);
     }
 
 }

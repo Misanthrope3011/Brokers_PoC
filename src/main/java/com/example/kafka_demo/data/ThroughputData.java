@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "THROUGHPUT_DATA")
 @NoArgsConstructor
-public class ThrougputData {
+public class ThroughputData {
 
     @Id
     @Column(name = "TRD_ID")
@@ -22,7 +22,7 @@ public class ThrougputData {
     private Long id;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "ETB_BROKER_DOMAIN")
+    @Column(name = "TRD_BROKER_DOMAIN")
     private BrokerDomain brokerDomain;
 
     @Column(name = "TRD_PROCESSING_TIME")
@@ -31,11 +31,18 @@ public class ThrougputData {
     @Column(name = "TRD_AUDIT_CD")
     private LocalDateTime localDateTime = LocalDateTime.now();
 
+    @ManyToOne
+    @JoinColumn(name = "TRD_BCD_ID")
+    private BrokerConfigurationData brokerConfigurationData;
+
+    @Getter
     public enum BrokerDomain {
         KAFKA("kafka"),
-
+        RABBIT_PARTITIONED("rabbitmq_partitioned"),
+        KAFKA_PARTITIONED("kafka_partitioned"),
+        PULSAR_PARTITIONED("pulsar_partitioned"),
         PULSAR("pulsar"),
-        RABBITMQ("rabbitmq");
+        RABBIT("rabbitmq");
         private final String name;
 
         BrokerDomain(String name) {
@@ -48,10 +55,9 @@ public class ThrougputData {
         }
     }
 
-    public ThrougputData(BrokerDomain brokerDomain, Long processingTimeMillis) {
+    public ThroughputData(BrokerDomain brokerDomain, Long processingTimeMillis) {
         this.brokerDomain = brokerDomain;
         this.processingTimeMillis = processingTimeMillis;
     }
-
 
 }

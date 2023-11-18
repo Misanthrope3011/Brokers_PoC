@@ -1,7 +1,35 @@
 server.port: 8081
+
+common:
+  modes:
+    producerMode: true
+    consumerMode: true
+    partitioned: false
+  topic:
+    config:
+      number-of-partitions: 5
+      replication-factor: 1
+      topic-name: STRING-TOPIC-2
+      concurrency: 1
+      load-size: 10000
+      truncate-on-startup: false
+  security:
+    rabbitmq:
+      username: ENC(8Qe+vrYVHdWuFwDc9AQ3JWdGgsXNduzO++mFizkpXKxuQYvsdEx7trJyYxXi4sJa)
+      password: ENC(M3V25sxkmnWZDsxnfzYsxtjqCNxinboQs+mf/hNCLVXL3gwllLm7wiF43rsosiGz)
+  data:
+    utils:
+      desc-size-bytes: 256
+      name-size-bytes: 256
+      sub-entity-array-size: 4
+      image-size-bytes: 10000
+      persistable: false
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/kafka_db
+    username: clm
+    password: ENC(Eh6ysCOM8cFm2dC0flEOLPKR0vOrp3T3cTHLGgZVB+cTfZHH3jqoWsp/t89M4N22)
     driver-class-name: org.postgresql.Driver
   kafka:
     bootstrap-servers: localhost:9092
@@ -14,21 +42,46 @@ spring:
       max-poll-records: 10
     producer:
       batch-size: 2000
+  cloud:
+      function:
+        definition: consumerMethod;senderMethod
+      stream:
+        bindings:
+          senderMethod-out-0:
+            producer:
+              partition-key-expression: headers["id"]
+              partitionCount: ${common.topic.config.number-of-partitions}
+            destination: ${common.topic.config.topic-name}
+          consumerMethod-in-0:
+            destination: ${common.topic.config.topic-name}
+            consumer:
+              concurrency: ${common.topic.config.concurrency}
+            group: testGroup
+        default-binder: kafka
 
   jpa:
     properties:
       hibernate:
         hbm2ddl:
           auto: update
-      dialect: org.hibernate.dialect.PostgreSQLDialect
+      dialect: org.hibernate.dialect.PostgreSQL82Dialect
   pulsar:
     client:
       service-url: pulsar://localhost:6650
       defaults:
         type-mappings:
-          - message-type: com.example.kafka_demo.dto.User
+          - message-type: com.example.kafka_demo.dto.DefaultSchema
             schema-info:
               schema-type: JSON
 
-producerMode: true
-consumerMode: true
+jasypt:
+  encryptor:
+    password: ${ENCRYPTOR_PASSWORD}
+    algorithm: "PBEWITHHMACSHA512ANDAES_256"
+    salt-generator-classname: "org.jasypt.salt.RandomSaltGenerator"
+    iv-generator-classname: "org.jasypt.iv.RandomIvGenerator"
+    provider-name: "SunJCE"
+    string-output-type: "base64"
+    pool-size: 1
+    key-obtention-iterations: 1000
+
