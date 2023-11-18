@@ -1,29 +1,32 @@
 package com.example.kafka_demo.service;
 
+import com.example.kafka_demo.ApplicationException;
 import com.example.kafka_demo.data.AccumulationData;
 import com.example.kafka_demo.data.ThroughputData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.KafkaException;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.utils.Bytes;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.listener.ConsumerSeekAware;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.Map;
 
-@Slf4j
+import static com.example.kafka_demo.utils.CommonAppUtils.logException;
+
 @Service
 @RequiredArgsConstructor
 @ConditionalOnExpression(value = "${common.modes.consumerMode} eq true and ${common.modes.partitioned} eq false ")
-public class KafkaConsumerService {
+public class KafkaConsumerService implements ConsumerSeekAware {
 
     private final ObjectMapper objectMapper;
     private final DataTestUtilsService dataTestUtilsService;
@@ -35,12 +38,18 @@ public class KafkaConsumerService {
             long processingTimeMillis = System.currentTimeMillis() - data.timestamp();
             AccumulationData mainEntity = objectMapper.readValue(data.value().get(), AccumulationData.class);
             dataTestUtilsService.saveProcessingData(ThroughputData.BrokerDomain.KAFKA, processingTimeMillis, mainEntity);
-        } catch (ConstraintViolationException | DataIntegrityViolationException | KafkaException e) {
-            log.error(ExceptionUtils.getMessage(e));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (ConstraintViolationException | DataIntegrityViolationException e) {
+            logException(e);
+        } catch (IOException | KafkaException e) {
+            throw new ApplicationException(e);
         }
 
+    }
+
+    @Override
+    public void onPartitionsAssigned(Map<TopicPartition, Long> assignments, ConsumerSeekCallback callback) {
+        assignments.forEach((topic, action) -> callback.seekToEnd(topic.topic(), topic.partition()));
+        ConsumerSeekAware.super.onPartitionsAssigned(assignments, callback);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.kafka_demo.service;
 
+import com.example.kafka_demo.ApplicationException;
 import com.example.kafka_demo.data.AccumulationData;
 import com.example.kafka_demo.data.ThroughputData;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +37,7 @@ public class RabbitMQConsumerService implements MessageListener {
         }  catch (ConstraintViolationException | DataIntegrityViolationException e) {
             log.error(ExceptionUtils.getMessage(e));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ApplicationException(e);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.example.kafka_demo.config.rabbitmq;
 
+import com.example.kafka_demo.ApplicationConstants;
 import com.example.kafka_demo.config.AppConfigurationProperties;
 import com.example.kafka_demo.service.RabbitMQConsumerService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -41,7 +43,7 @@ public class RabbitMQBrokerConfig {
 
     @Bean
     public Queue queue() {
-        return new Queue(appConfigProperties.getBrokerConsumerConfigs().topicName());
+        return new Queue(ApplicationConstants.EXCHANGE);
     }
 
     @Bean
@@ -76,8 +78,13 @@ public class RabbitMQBrokerConfig {
     }
 
     @Bean
-    Binding binding(Queue queue, TopicExchange exchange) {
+    public Binding binding(Queue queue, TopicExchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with(appConfigProperties.getBrokerConsumerConfigs().topicName());
+    }
+
+    @Bean
+    public RabbitAdmin rabbitAdmin() {
+        return new RabbitAdmin(connectionFactory());
     }
 
 }

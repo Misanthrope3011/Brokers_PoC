@@ -1,13 +1,13 @@
 package com.example.kafka_demo.service;
 
 import com.example.kafka_demo.ApplicationConstants;
+import com.example.kafka_demo.ApplicationException;
 import com.example.kafka_demo.data.AccumulationData;
 import com.example.kafka_demo.data.ThroughputData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.SubscriptionType;
@@ -21,6 +21,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+
+import static com.example.kafka_demo.utils.CommonAppUtils.logException;
+
 
 @Service
 @Slf4j
@@ -36,7 +39,7 @@ public class PulsarConsumerService {
             topics = "${common.topic.config.topic-name}",
             subscriptionType = SubscriptionType.Shared,
             schemaType = SchemaType.JSON,
-            concurrency =  "${common.topic.config.concurrency}"
+            concurrency = "${common.topic.config.concurrency}"
     )
     @Transactional(propagation = Propagation.REQUIRED)
     public void stringTopicListener(Consumer<Bytes> consumer, Message<Bytes> msg) {
@@ -44,10 +47,10 @@ public class PulsarConsumerService {
             long processingTimeMillis = System.currentTimeMillis() - msg.getPublishTime();
             AccumulationData entity = objectMapper.readValue(msg.getData(), AccumulationData.class);
             dataTestUtilsService.saveProcessingData(ThroughputData.BrokerDomain.PULSAR, processingTimeMillis, entity);
-        }  catch (ConstraintViolationException | DataIntegrityViolationException e) {
-            log.error(ExceptionUtils.getMessage(e));
+        } catch (ConstraintViolationException | DataIntegrityViolationException e) {
+            logException(e);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ApplicationException(e);
         }
     }
 

@@ -4,6 +4,7 @@ import com.example.kafka_demo.config.configuration.properties.RandomDataProperti
 import com.example.kafka_demo.data.AccumulationData;
 import com.example.kafka_demo.data.NestedEntityInfo;
 import com.example.kafka_demo.data.NestedEntityInfo2;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class RandomDataUtils {
 
     private final SecureRandom secureRandom;
     private final RandomDataProperties randomDataProperties;
+    private final Object monitor = new ObjectMapper();
 
     public List<AccumulationData> generateRandomData(long size) {
         var byteImage = new byte[randomDataProperties.imageSizeBytes()];
@@ -36,10 +38,10 @@ public class RandomDataUtils {
     private AccumulationData createAccumulationData(long size, AtomicInteger atomicInteger, int subEntityArraySize, byte[] byteImage) {
         var nestedEntityInfos = new ArrayList<NestedEntityInfo>();
         var nestedEntityInfos2 = new ArrayList<NestedEntityInfo2>();
-        synchronized (this) {
+        synchronized (monitor) {
             atomicInteger.incrementAndGet();
-            double progress = Double.parseDouble(String.format("%.3f", (double) atomicInteger.get() / size));
-            if (Double.parseDouble(String.format("%.3f", progress * 100)) % 1 == 0) {
+            double progress = Double.parseDouble(String.format("%.8f", (double) atomicInteger.get() / size));
+            if (Double.parseDouble(String.format("%.8f", progress * 100)) % 1 == 0) {
                 log.info("Waiting to initialize data: Progress : ".concat(String.format("%.0f", progress * 100)).concat("%"));
             }
         }

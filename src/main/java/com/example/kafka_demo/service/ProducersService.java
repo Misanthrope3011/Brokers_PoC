@@ -1,7 +1,7 @@
 package com.example.kafka_demo.service;
 
+import com.example.kafka_demo.ApplicationException;
 import com.example.kafka_demo.config.configuration.properties.BrokersConfigProperties;
-import com.example.kafka_demo.data.ThroughputData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,9 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+
+import static com.example.kafka_demo.utils.CommonAppUtils.logException;
+
 
 @Service
 @Slf4j
@@ -42,9 +45,9 @@ public class ProducersService {
                         rabbitTemplate.convertAndSend(brokersConfigProperties.topicName(), brokersConfigProperties.topicName(), message);
                         kafkaTemplate.send(brokersConfigProperties.topicName(), objectMapper.writeValueAsBytes(message));
                     } catch (PulsarClientException ex) {
-                        throw new RuntimeException("Error while sending message via Pulsar: " + ExceptionUtils.getMessage(ex));
+                        throw new ApplicationException("Error while sending message via Pulsar: " + ExceptionUtils.getMessage(ex));
                     } catch(JsonProcessingException ex) {
-                        throw new RuntimeException("Error while deserializing message: " + ExceptionUtils.getMessage(ex));
+                        logException(ex);
                     }
                 });
     }

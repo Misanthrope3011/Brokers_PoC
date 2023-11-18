@@ -1,15 +1,16 @@
 package com.example.kafka_demo.config;
 
+import com.example.kafka_demo.ApplicationConstants;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.apache.pulsar.common.policies.data.Policies;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.pulsar.core.PulsarTopic;
 
@@ -23,13 +24,18 @@ public class TopicManagerBean {
     private final AppConfigurationProperties appConfigurationProperties;
     private final KafkaAdmin kafkaAdmin;
     private final PulsarAdmin pulsarAdmin;
+    private final RabbitAdmin rabbitAdmin;
 
-    @EventListener(ApplicationReadyEvent.class)
+    @PostConstruct
     void initPartitions() throws PulsarAdminException {
         createKafkaTopic();
+        if (pulsarAdmin.topics().getLastMessageId(appConfigurationProperties.getBrokerConsumerConfigs().topicName()) != null) {
+            pulsarAdmin.topics().resetCursor(appConfigurationProperties.getBrokerConsumerConfigs().topicName(), ApplicationConstants.SUBSCRIPTION_NAME, System.currentTimeMillis());
+        }
+        rabbitAdmin.purgeQueue(ApplicationConstants.EXCHANGE);
         Policies policies = pulsarAdmin.namespaces().getPolicies(DEFAULT_CLUSTER_NAMESPACE);
         policies.replication_clusters.clear();
-        for(short i = 0;  i < appConfigurationProperties.getBrokerConsumerConfigs().replicationFactor(); i++) {
+        for (short i = 0; i < appConfigurationProperties.getBrokerConsumerConfigs().replicationFactor(); i++) {
             policies.replication_clusters.add(DEFAULT_CLUSTER_NAMESPACE.concat(String.valueOf(i)));
         }
     }
@@ -48,9 +54,6 @@ public class TopicManagerBean {
 
     @Bean
     TopicExchange exchange() {
-        System.setProperty("spring.cloud.stream.bindings.output.producer.partition-count", String.valueOf(appConfigurationProperties.getBrokerConsumerConfigs().numberOfPartitions()));
-        System.setProperty("spring.cloud.stream.bindings.output.producer.partition-key-expression", "headers['id']");
-
         return new TopicExchange(appConfigurationProperties.getBrokerConsumerConfigs().topicName());
     }
 

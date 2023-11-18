@@ -14,6 +14,8 @@ public class ApplicationConstants {
     public static final String DEFAULT_LOOKUP_BIND = "0.0.0.0";
     public static final String BROKERS_HOST_NAME = "localhost";
     public static final  String SUBSCRIPTION_NAME = "string-topic-subscription";
+    public static final  String EXCHANGE = "rabbit-exchange";
+
     public static final String HTTP = "http";
     public static final int THREAD_POOL = 5;
 
