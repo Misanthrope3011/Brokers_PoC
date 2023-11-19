@@ -37,8 +37,8 @@ public class PartitionedConfig {
         List<AccumulationData> entity = randomDataUtils.generateRandomData(1L);
         entity.forEach(var -> var.setBrokerDomain(ThroughputData.BrokerDomain.valueOf(binder.toUpperCase().concat(PARTITIONED_SUFFIX))));
 
-        return () -> Flux.interval(Duration.ofMillis(1))
-                .onBackpressureDrop()
+        return () -> Flux.interval(Duration.ofMillis(10))
+                .onBackpressureLatest()
                 .map(tick -> {
             return MessageBuilder
                     .withPayload(entity.get(0))
@@ -51,8 +51,8 @@ public class PartitionedConfig {
     public Consumer<Message<AccumulationData>> consumerMethod() {
         return (value) -> {
             long processingTime = System.currentTimeMillis();
-            switch (ThroughputData.BrokerDomain.valueOf(binder)) {
-                case KAFKA -> processingTime -= processingTime - (Long) value.getHeaders().get("kafka_receivedTimestamp");
+            switch (ThroughputData.BrokerDomain.valueOf(binder.toUpperCase())) {
+                case KAFKA -> processingTime -= (Long) value.getHeaders().get("kafka_receivedTimestamp");
                 case PULSAR -> processingTime -= (Long) value.getHeaders().get("pulsar_message_publish_time");
                 case RABBIT -> processingTime -= value.getHeaders().getTimestamp();
 

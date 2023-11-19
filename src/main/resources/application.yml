@@ -4,7 +4,7 @@ common:
   modes:
     producerMode: true
     consumerMode: true
-    partitioned: false
+    partitioned: true
   topic:
     config:
       number-of-partitions: 5

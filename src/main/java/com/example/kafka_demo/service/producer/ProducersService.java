@@ -11,6 +11,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -25,7 +26,7 @@ import static com.example.kafka_demo.ApplicationConstants.InvocationPriority;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "common.modes.producerMode", havingValue = "true")
+@ConditionalOnExpression(value = "${common.modes.producerMode} eq true and ${common.modes.partitioned} eq false ")
 public class ProducersService {
 
     private final ObjectMapper objectMapper;
