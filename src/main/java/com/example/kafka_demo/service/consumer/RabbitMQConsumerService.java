@@ -1,6 +1,7 @@
 package com.example.kafka_demo.service.consumer;
 
 import com.example.kafka_demo.ApplicationException;
+import com.example.kafka_demo.annotation.ConsumerMode;
 import com.example.kafka_demo.data.AccumulationData;
 import com.example.kafka_demo.data.ThroughputData;
 import com.example.kafka_demo.service.DataTestUtilsService;
@@ -11,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -22,7 +22,7 @@ import java.io.IOException;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ConditionalOnExpression(value = "${common.modes.consumerMode} eq true and ${common.modes.partitioned} eq false ")
+@ConsumerMode
 public class RabbitMQConsumerService implements MessageListener {
 
     private final DataTestUtilsService dataTestUtilsService;

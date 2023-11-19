@@ -1,6 +1,7 @@
 package com.example.kafka_demo.service.producer;
 
 import com.example.kafka_demo.ApplicationException;
+import com.example.kafka_demo.annotation.ProducerMode;
 import com.example.kafka_demo.config.configuration.properties.BrokersConfigProperties;
 import com.example.kafka_demo.service.DataTestUtilsService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,22 +12,20 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import static com.example.kafka_demo.utils.CommonAppUtils.logException;
 import static com.example.kafka_demo.ApplicationConstants.InvocationPriority;
+import static com.example.kafka_demo.utils.CommonAppUtils.logException;
 
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ConditionalOnExpression(value = "${common.modes.producerMode} eq true and ${common.modes.partitioned} eq false ")
+@ProducerMode
 public class ProducersService {
 
     private final ObjectMapper objectMapper;

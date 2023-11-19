@@ -1,6 +1,7 @@
 package com.example.kafka_demo.service.consumer;
 
 import com.example.kafka_demo.ApplicationException;
+import com.example.kafka_demo.annotation.ConsumerMode;
 import com.example.kafka_demo.data.AccumulationData;
 import com.example.kafka_demo.data.ThroughputData;
 import com.example.kafka_demo.service.DataTestUtilsService;
@@ -11,7 +12,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.utils.Bytes;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.ConsumerSeekAware;
@@ -26,7 +26,7 @@ import static com.example.kafka_demo.utils.CommonAppUtils.logException;
 
 @Service
 @RequiredArgsConstructor
-@ConditionalOnExpression(value = "${common.modes.consumerMode} eq true and ${common.modes.partitioned} eq false ")
+@ConsumerMode
 public class KafkaConsumerService implements ConsumerSeekAware {
 
     private final ObjectMapper objectMapper;
