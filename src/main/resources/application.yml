@@ -9,7 +9,7 @@ common:
     config:
       number-of-partitions: 5
       replication-factor: 1
-      topic-name: STRING-TOPIC-2
+      topic-name: STRING-TOPIC-545
       concurrency: 1
       load-size: 10000
       truncate-on-startup: false

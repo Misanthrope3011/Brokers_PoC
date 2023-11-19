@@ -2,6 +2,7 @@ package com.example.kafka_demo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.experimental.UtilityClass;
 
 public class ApplicationConstants {
 
@@ -15,6 +16,14 @@ public class ApplicationConstants {
     public static final String BROKERS_HOST_NAME = "localhost";
     public static final  String SUBSCRIPTION_NAME = "string-topic-subscription";
     public static final  String EXCHANGE = "rabbit-exchange";
+    public static final  String DEFAULT_NAMESPACE = "public/default";
+
+    @UtilityClass
+    public static final class InvocationPriority {
+        public final int HIGHEST = 1;
+        public final int MEDIUM = 2;
+        public final int LOW = 2;
+    }
 
     public static final String HTTP = "http";
     public static final int THREAD_POOL = 5;

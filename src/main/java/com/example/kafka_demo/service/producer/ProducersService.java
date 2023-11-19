@@ -14,10 +14,12 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import static com.example.kafka_demo.utils.CommonAppUtils.logException;
+import static com.example.kafka_demo.ApplicationConstants.InvocationPriority;
 
 
 @Service
@@ -34,6 +36,7 @@ public class ProducersService {
     private final BrokersConfigProperties brokersConfigProperties;
 
     @EventListener(ApplicationReadyEvent.class)
+    @Order(InvocationPriority.LOW)
     void init() throws Exception {
         if(brokersConfigProperties.truncateOnStartup()) {
             dataTestUtilsService.truncate();

@@ -1,6 +1,5 @@
 package com.example.kafka_demo.config.rabbitmq;
 
-import com.example.kafka_demo.ApplicationConstants;
 import com.example.kafka_demo.config.AppConfigurationProperties;
 import com.example.kafka_demo.service.consumer.RabbitMQConsumerService;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +42,7 @@ public class RabbitMQBrokerConfig {
 
     @Bean
     public Queue queue() {
-        return new Queue(ApplicationConstants.EXCHANGE);
+        return new Queue(appConfigProperties.getBrokerConsumerConfigs().topicName());
     }
 
     @Bean

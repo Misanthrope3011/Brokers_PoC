@@ -1,14 +1,14 @@
 version: '3.7'
 
 services:
-  clm-kafka:
+  kafka:
     image: bitnami/kafka:3.3.2
     container_name: kafka
     environment:
       ALLOW_PLAINTEXT_LISTENER: 'yes'
       KAFKA_ZOOKEEPER_USER: 'kafka'
       KAFKA_ZOOKEEPER_PASSWORD: 'zouu2kdd^'
-      KAFKA_ZOOKEEPER_CONNECT: 'localhost:2181'
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092"
       KAFKA_HEAP_OPTS: '-Xms256m -Xmx512m'
     ports:
