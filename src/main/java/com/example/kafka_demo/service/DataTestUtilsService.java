@@ -6,6 +6,7 @@ import com.example.kafka_demo.data.*;
 import com.example.kafka_demo.repository.MainEntityRepository;
 import com.example.kafka_demo.repository.ThroughputDataRepository;
 import com.example.kafka_demo.utils.RandomDataUtils;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import lombok.Getter;
@@ -34,6 +35,17 @@ public class DataTestUtilsService {
     private final RandomDataProperties randomDataProperties;
     private final BrokerConfigurationData brokerConfigurationData;
 
+    @PostConstruct
+    void truncateOnStartupInvoker() {
+        if(brokersConfigProperties.truncateOnStartup()) {
+            truncate();
+        }
+    }
+
+    private void truncate() {
+        throughputDataRepository.deleteAll();
+    }
+
     public List<AccumulationData> loadData(long size) throws ExecutionException, InterruptedException {
        return executorService.execute(() -> randomDataUtils.generateRandomData(size));
     }
@@ -44,10 +56,6 @@ public class DataTestUtilsService {
         if(randomDataProperties.persistable()) {
             saveAccumulationData(entity);
         }
-    }
-
-    public void truncate() {
-        throughputDataRepository.deleteAll();
     }
 
     public void saveThroughPutData(ThroughputData throughputData) {

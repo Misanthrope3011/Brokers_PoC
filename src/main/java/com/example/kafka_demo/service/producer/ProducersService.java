@@ -38,9 +38,6 @@ public class ProducersService {
     @EventListener(ApplicationReadyEvent.class)
     @Order(InvocationPriority.LOW)
     void init() throws Exception {
-        if(brokersConfigProperties.truncateOnStartup()) {
-            dataTestUtilsService.truncate();
-        }
         dataTestUtilsService.loadData(brokersConfigProperties.loadSize())
                 .parallelStream()
                 .forEach(message -> {

@@ -20,6 +20,7 @@ import static com.example.kafka_demo.ApplicationConstants.SUBSCRIPTION_NAME;
 public class PulsarConfig {
 
     private final BrokersConfigProperties brokersProperties;
+    private static final String DLQ_PREFIX = "dlq.";
 
 
     @Bean
@@ -57,6 +58,14 @@ public class PulsarConfig {
                 .subscriptionName(SUBSCRIPTION_NAME)
                 .subscriptionType(SubscriptionType.Shared)
                 .subscribe();
+    }
+
+    @Bean
+    DeadLetterPolicy deadLetterPolicy() {
+        return DeadLetterPolicy.builder()
+                .maxRedeliverCount(10)
+                .deadLetterTopic(DLQ_PREFIX + brokersProperties.topicName())
+                .build();
     }
 
 }

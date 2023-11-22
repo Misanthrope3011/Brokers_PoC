@@ -17,6 +17,7 @@ public class ApplicationConstants {
     public static final  String SUBSCRIPTION_NAME = "string-topic-subscription";
     public static final  String EXCHANGE = "rabbit-exchange";
     public static final  String DEFAULT_NAMESPACE = "public/default";
+    public static final String FULL_TOPIC_PREFIX = "persistent://" + DEFAULT_NAMESPACE;
 
     @UtilityClass
     public static final class InvocationPriority {

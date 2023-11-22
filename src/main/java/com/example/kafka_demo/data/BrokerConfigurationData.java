@@ -31,11 +31,15 @@ public class BrokerConfigurationData {
     @Column(name = "BCD_CONCURRENCY")
     private long numberOfConsumers;
 
-    public BrokerConfigurationData(long numPartitions, long loadSize, boolean isCloud, long numberOfConsumers) {
+    @Column(name = "BDC_MESSAGE_SIZE_BYTES")
+    private long messageSizeBytes;
+
+    public BrokerConfigurationData(long numPartitions, long loadSize, boolean isCloud, long numberOfConsumers, long messageSizeBytes) {
         this.numPartitions = numPartitions;
         this.loadSize = loadSize;
         this.isCloud = isCloud;
         this.numberOfConsumers = numberOfConsumers;
+        this.messageSizeBytes = messageSizeBytes;
     }
 
 }

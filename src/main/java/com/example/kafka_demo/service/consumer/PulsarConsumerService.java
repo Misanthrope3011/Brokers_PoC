@@ -40,8 +40,7 @@ public class PulsarConsumerService {
             topics = "${common.topic.config.topic-name}",
             subscriptionType = SubscriptionType.Shared,
             schemaType = SchemaType.JSON,
-            concurrency = "${common.topic.config.concurrency}"
-    )
+            concurrency = "${common.topic.config.concurrency}")
     @Transactional(propagation = Propagation.REQUIRED)
     public void stringTopicListener(Consumer<Bytes> consumer, Message<Bytes> msg) {
         try {

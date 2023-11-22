@@ -1,8 +1,10 @@
 package com.example.kafka_demo.config;
 
 import com.example.kafka_demo.ApplicationConstants;
+import com.example.kafka_demo.config.configuration.properties.RandomDataProperties;
 import com.example.kafka_demo.data.BrokerConfigurationData;
 import com.example.kafka_demo.repository.BrokerConfigurationRepository;
+import com.example.kafka_demo.service.DataTestUtilsService;
 import lombok.RequiredArgsConstructor;
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.api.PulsarClientException;
@@ -37,11 +39,13 @@ public class CommonConfig {
 
     @Bean
     public BrokerConfigurationData getBrokerConfig() {
-        Optional<BrokerConfigurationData> brokerConfigurationData = brokerConfigurationRepository.findByNumPartitionsAndIsCloudAndLoadSizeAndNumberOfConsumers(appConfigurationProperties.getBrokerConsumerConfigs().numberOfPartitions(),
-                isPartitioned, appConfigurationProperties.getBrokerConsumerConfigs().loadSize(), appConfigurationProperties.getBrokerConsumerConfigs().concurrency());
+        RandomDataProperties randomDataProperties = appConfigurationProperties.getRandomDataProperties();
+        int messageSize = randomDataProperties.subEntityArraySize() * (randomDataProperties.descSizeBytes() + randomDataProperties.nameSizeBytes()) + randomDataProperties.imageSizeBytes();
+        Optional<BrokerConfigurationData> brokerConfigurationData = brokerConfigurationRepository.isCurrentConfigExists(appConfigurationProperties.getBrokerConsumerConfigs().numberOfPartitions(),
+                isPartitioned, appConfigurationProperties.getBrokerConsumerConfigs().loadSize(), appConfigurationProperties.getBrokerConsumerConfigs().concurrency(), messageSize);
 
         return brokerConfigurationData.orElseGet(() -> brokerConfigurationRepository.save(new BrokerConfigurationData(appConfigurationProperties.getBrokerConsumerConfigs().numberOfPartitions(),
-                appConfigurationProperties.getBrokerConsumerConfigs().loadSize(), isPartitioned, appConfigurationProperties.getBrokerConsumerConfigs().concurrency())));
+                appConfigurationProperties.getBrokerConsumerConfigs().loadSize(), isPartitioned, appConfigurationProperties.getBrokerConsumerConfigs().concurrency(), messageSize)));
 
     }
 
