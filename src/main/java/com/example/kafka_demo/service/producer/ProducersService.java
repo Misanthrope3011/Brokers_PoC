@@ -46,7 +46,7 @@ public class ProducersService {
                         rabbitTemplate.convertAndSend(brokersConfigProperties.topicName(), brokersConfigProperties.topicName(), message);
                         kafkaTemplate.send(brokersConfigProperties.topicName(), objectMapper.writeValueAsBytes(message));
                     } catch (PulsarClientException ex) {
-                        throw new ApplicationException("Error while sending message via Pulsar: " + ExceptionUtils.getMessage(ex));
+                        throw new ApplicationException(ex);
                     } catch(JsonProcessingException ex) {
                         logException(ex);
                     }

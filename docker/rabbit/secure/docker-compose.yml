@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  rabbitmq3:
+    container_name: "rabbitmq"
+    build: ../
+    environment:
+      - RABBITMQ_DEFAULT_USER=myuser
+      - RABBITMQ_DEFAULT_PASS=mypassword
+      - RABBITMQ_CONFIG_FILE=/etc/rabbitmq/rabbitmq.conf
+    ports:
+      # AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+      - '5671:5671'
+    volumes:
+      - ../../certs/rootCA.crt:/etc/certs/rootCA.crt
+      - ../../certs/rootCA.key:/etc/certs/rootCA.key
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+networks:
+  brokers_app_network:
+    external: true

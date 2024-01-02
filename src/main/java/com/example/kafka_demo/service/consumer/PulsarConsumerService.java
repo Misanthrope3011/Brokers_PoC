@@ -2,6 +2,7 @@ package com.example.kafka_demo.service.consumer;
 
 import com.example.kafka_demo.ApplicationConstants;
 import com.example.kafka_demo.ApplicationException;
+import com.example.kafka_demo.annotation.ConsumerMode;
 import com.example.kafka_demo.data.AccumulationData;
 import com.example.kafka_demo.data.ThroughputData;
 import com.example.kafka_demo.service.DataTestUtilsService;
@@ -14,7 +15,6 @@ import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.SubscriptionType;
 import org.apache.pulsar.common.schema.SchemaType;
 import org.apache.pulsar.shade.com.google.common.primitives.Bytes;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.pulsar.annotation.PulsarListener;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ import static com.example.kafka_demo.utils.CommonAppUtils.logException;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ConditionalOnExpression(value = "${common.modes.consumerMode} eq true and ${common.modes.partitioned} eq false ")
+@ConsumerMode
 public class PulsarConsumerService {
 
     private final ObjectMapper objectMapper;

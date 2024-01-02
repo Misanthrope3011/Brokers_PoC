@@ -4,15 +4,16 @@ common:
   modes:
     producerMode: true
     consumerMode: true
-    partitioned: true
+    partitioned: false
   topic:
     config:
-      number-of-partitions: 5
+      number-of-partitions: 1
       replication-factor: 1
-      topic-name: STRING-TOPIC-545
+      topic-name: STRING-TOPIC-13
       concurrency: 1
       load-size: 10000
       truncate-on-startup: false
+      is-ssl-enabled: true
   security:
     rabbitmq:
       username: ENC(8Qe+vrYVHdWuFwDc9AQ3JWdGgsXNduzO++mFizkpXKxuQYvsdEx7trJyYxXi4sJa)
@@ -22,7 +23,7 @@ common:
       desc-size-bytes: 256
       name-size-bytes: 256
       sub-entity-array-size: 4
-      image-size-bytes: 10000
+      image-size-bytes: 100000
       persistable: false
 
 spring:
@@ -31,17 +32,19 @@ spring:
     username: clm
     password: ENC(Eh6ysCOM8cFm2dC0flEOLPKR0vOrp3T3cTHLGgZVB+cTfZHH3jqoWsp/t89M4N22)
     driver-class-name: org.postgresql.Driver
-  kafka:
-    bootstrap-servers: localhost:9092
-    client-id: kafka_test
-    consumer:
-      group-id: kafka_test_group
-      value-deserializer: org.apache.kafka.common.serialization.BytesDeserializer
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      auto-offset-reset: earliest
-      max-poll-records: 10
-    producer:
-      batch-size: 2000
+#  kafka:
+#    bootstrap-servers: localhost:9092
+#    client-id: kafka_test
+#    consumer:
+#      group-id: kafka_test_group
+#      value-deserializer: org.apache.kafka.common.serialization.BytesDeserializer
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      auto-offset-reset: earliest
+#      max-poll-records: 10
+#    producer:
+#      batch-size: 2000
+#    security:
+#      protocol: SSL
   cloud:
       function:
         definition: consumerMethod;senderMethod
@@ -57,7 +60,8 @@ spring:
             consumer:
               concurrency: ${common.topic.config.concurrency}
             group: testGroup
-        default-binder: kafka
+        default-binder: pulsar
+
 
   jpa:
     properties:

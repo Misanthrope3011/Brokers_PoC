@@ -47,6 +47,7 @@ public class PartitionedConfig {
                     counter.incrementAndGet();
             return MessageBuilder
                     .withPayload(entity.get(0))
+                    .setHeader("custom_timestamp", System.currentTimeMillis())
                     .build();
         }).takeWhile((message) -> counter.get() < brokersConfigProperties.loadSize());
     }
@@ -55,13 +56,8 @@ public class PartitionedConfig {
     @SuppressWarnings("ConstantConditions")
     public Consumer<Message<AccumulationData>> consumerMethod() {
         return (value) -> {
-            long processingTime = System.currentTimeMillis();
-            switch (ThroughputData.BrokerDomain.valueOf(binder.toUpperCase())) {
-                case KAFKA -> processingTime -= (Long) value.getHeaders().get("kafka_receivedTimestamp");
-                case PULSAR -> processingTime -= (Long) value.getHeaders().get("pulsar_message_publish_time");
-                case RABBIT -> processingTime -= value.getHeaders().getTimestamp();
+            long processingTime = System.currentTimeMillis() - (Long) value.getHeaders().get("custom_timestamp");
 
-            }
             dataTestUtilsService.saveThroughPutData(new ThroughputData(ThroughputData.BrokerDomain.valueOf(binder.toUpperCase().concat(PARTITIONED_SUFFIX)), processingTime));
         };
     }
