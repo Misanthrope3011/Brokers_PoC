@@ -1,5 +1,6 @@
 package com.example.kafka_demo.config.rabbitmq;
 
+import com.example.kafka_demo.ApplicationConstants;
 import com.example.kafka_demo.annotation.ConsumerMode;
 import com.example.kafka_demo.config.AppConfigurationProperties;
 import com.example.kafka_demo.service.consumer.RabbitMQConsumerService;
@@ -22,6 +23,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.pulsar.annotation.EnablePulsar;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.*;
+import java.security.cert.CertificateException;
+
 @Configuration
 @EnableKafka
 @EnablePulsar
@@ -32,11 +42,32 @@ public class RabbitMQBrokerConfig {
     private final AppConfigurationProperties appConfigProperties;
 
     @Bean
-    public ConnectionFactory connectionFactory() {
-        var connectionFactory = new CachingConnectionFactory(appConfigProperties.getBrokerConsumerConfigs().hostName());
+    public ConnectionFactory connectionFactory() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, IOException, CertificateException, UnrecoverableKeyException {
+        var rabbitPort = appConfigProperties.getBrokerConsumerConfigs().isSslEnabled() ? ApplicationConstants.RABBITMQ_SECURE_PORT : ApplicationConstants.RABBITMQ_PORT;
+        var connectionFactory = new CachingConnectionFactory(appConfigProperties.getBrokerConsumerConfigs().hostName(), rabbitPort);
         connectionFactory.setCacheMode(CachingConnectionFactory.CacheMode.CHANNEL);
         connectionFactory.setUsername(appConfigProperties.getCredentialsConfig().rabbitmq().username());
         connectionFactory.setPassword(appConfigProperties.getCredentialsConfig().rabbitmq().password());
+        if(appConfigProperties.getBrokerConsumerConfigs().isSslEnabled()) {
+            char[] keyPassphrase = "datahub".toCharArray();
+            KeyStore ks = KeyStore.getInstance("PKCS12");
+            ks.load(new FileInputStream("/home/sebastian/IdeaProjects/kafka-ssl-compose/secrets/broker.keystore.jks"), keyPassphrase);
+
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+            kmf.init(ks, keyPassphrase);
+
+            char[] trustPassphrase = "datahub".toCharArray();
+            KeyStore tks = KeyStore.getInstance("PKCS12");
+            tks.load(new FileInputStream("/home/sebastian/IdeaProjects/kafka-ssl-compose/secrets/broker.truststore.jks"), trustPassphrase);
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+            tmf.init(tks);
+
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+
+            connectionFactory.getRabbitConnectionFactory().useSslProtocol(sslContext);
+        }
+
         return connectionFactory;
     }
 
@@ -47,7 +78,7 @@ public class RabbitMQBrokerConfig {
 
     @Bean
     @ConsumerMode
-    public SimpleMessageListenerContainer listenerContainer(RabbitMQConsumerService rabbitMQConsumerService) {
+    public SimpleMessageListenerContainer listenerContainer(RabbitMQConsumerService rabbitMQConsumerService) throws NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, CertificateException, KeyStoreException, IOException {
         var container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory());
         container.setQueues(queue());
@@ -57,7 +88,7 @@ public class RabbitMQBrokerConfig {
     }
 
     @Bean
-    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory() {
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory() throws NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, CertificateException, KeyStoreException, IOException {
         var factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory());
         return factory;
@@ -69,7 +100,7 @@ public class RabbitMQBrokerConfig {
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate() {
+    public RabbitTemplate rabbitTemplate() throws NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, CertificateException, KeyStoreException, IOException {
         RabbitTemplate template = new RabbitTemplate(connectionFactory());
         template.setDefaultReceiveQueue(appConfigProperties.getBrokerConsumerConfigs().topicName());
         template.setMessageConverter(jsonMessageConverter());
@@ -82,7 +113,7 @@ public class RabbitMQBrokerConfig {
     }
 
     @Bean
-    public RabbitAdmin rabbitAdmin() {
+    public RabbitAdmin rabbitAdmin() throws NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException, CertificateException, KeyStoreException, IOException {
         return new RabbitAdmin(connectionFactory());
     }
 

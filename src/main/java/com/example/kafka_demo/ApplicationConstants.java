@@ -7,8 +7,12 @@ import lombok.experimental.UtilityClass;
 public class ApplicationConstants {
 
     public static final int KAFKA_PORT = 9092;
-    public static final int RABBITMQ_PORT = 15672;
+    public static final int RABBITMQ_SECURE_PORT = 5671;
+    public static final int RABBITMQ_PORT = 5672;
+
     public static final int PULSAR_BOOKIE_PORT = 6650;
+    public static final int PULSAR_SERVICE_TLS_PORT = 6651;
+
     public static final int PULSAR_BROKER_PORT = 8080;
     public static final int DEFAULT_LOAD_SIZE = 100;
     public static final String DEFAULT_CLUSTER_NAMESPACE = "public/default";

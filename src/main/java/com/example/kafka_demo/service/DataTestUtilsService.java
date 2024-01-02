@@ -51,6 +51,7 @@ public class DataTestUtilsService {
     }
 
     public void saveProcessingData(ThroughputData.BrokerDomain brokerDomain, long processingTimeMillis, AccumulationData entity) {
+        brokerDomain = brokersConfigProperties.isSslEnabled() ? ThroughputData.BrokerDomain.valueOf((brokerDomain + "_ssl").toUpperCase()) : brokerDomain;
         var throughputData = new ThroughputData(brokerDomain, processingTimeMillis);
         saveThroughPutData(throughputData);
         if(randomDataProperties.persistable()) {

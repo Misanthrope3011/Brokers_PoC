@@ -42,7 +42,9 @@ public class RandomDataUtils {
             atomicInteger.incrementAndGet();
             double progress = Double.parseDouble(String.format("%.8f", (double) atomicInteger.get() / size));
             if (Double.parseDouble(String.format("%.8f", progress * 100)) % 1 == 0) {
-                log.info("Waiting to initialize data: Progress : ".concat(String.format("%.0f", progress * 100)).concat("%"));
+                log.info("Waiting to initialize data: Progress : "
+                        .concat(String.format("%.0f", progress * 100))
+                        .concat("%"));
             }
         }
 

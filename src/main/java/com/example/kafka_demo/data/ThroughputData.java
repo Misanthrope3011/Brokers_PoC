@@ -42,12 +42,15 @@ public class ThroughputData {
         KAFKA_PARTITIONED("kafka_partitioned"),
         PULSAR_PARTITIONED("pulsar_partitioned"),
         PULSAR("pulsar"),
-        RABBIT("rabbitmq");
+        RABBIT("rabbitmq"),
+        KAFKA_SSL("kafka_ssl"),
+        PULSAR_SSL("pulsar_ssl");
         private final String name;
 
         BrokerDomain(String name) {
             this.name = name;
         }
+
 
         @Override
         public String toString() {

@@ -11,6 +11,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092"
       KAFKA_HEAP_OPTS: '-Xms256m -Xmx512m'
+      KAFKA_MESSAGE_MAX_BYTES: 1024000
     ports:
       - '9092:9092'
     networks:

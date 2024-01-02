@@ -34,12 +34,16 @@ public class BrokerConfigurationData {
     @Column(name = "BDC_MESSAGE_SIZE_BYTES")
     private long messageSizeBytes;
 
-    public BrokerConfigurationData(long numPartitions, long loadSize, boolean isCloud, long numberOfConsumers, long messageSizeBytes) {
+    @Column(name = "BDC_IS_SSL_ENABLED")
+    private boolean isSslEnabled;
+
+    public BrokerConfigurationData(long numPartitions, long loadSize, boolean isCloud, long numberOfConsumers, long messageSizeBytes, boolean isSslEnabled) {
         this.numPartitions = numPartitions;
         this.loadSize = loadSize;
         this.isCloud = isCloud;
         this.numberOfConsumers = numberOfConsumers;
         this.messageSizeBytes = messageSizeBytes;
+        this.isSslEnabled = isSslEnabled;
     }
 
 }

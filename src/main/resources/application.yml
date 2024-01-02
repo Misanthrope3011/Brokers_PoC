@@ -1,18 +1,19 @@
-server.port: 8081
+server.port: 8085
 
 common:
   modes:
     producerMode: true
     consumerMode: true
-    partitioned: true
+    partitioned: false
   topic:
     config:
-      number-of-partitions: 5
+      number-of-partitions: 1
       replication-factor: 1
-      topic-name: STRING-TOPIC-545
+      topic-name: STRING-TOPIC-20
       concurrency: 1
       load-size: 10000
       truncate-on-startup: false
+      is-ssl-enabled: true
   security:
     rabbitmq:
       username: ENC(8Qe+vrYVHdWuFwDc9AQ3JWdGgsXNduzO++mFizkpXKxuQYvsdEx7trJyYxXi4sJa)
@@ -22,10 +23,15 @@ common:
       desc-size-bytes: 256
       name-size-bytes: 256
       sub-entity-array-size: 4
-      image-size-bytes: 10000
+      image-size-bytes: 100000
       persistable: false
 
 spring:
+  rabbitmq:
+    ssl:
+      trust-store-password: datahub
+      trust-store: /home/sebastian/IdeaProjects/kafka-ssl-compose/secrets/broker.truststore.jks
+      trust-store-algorithm: PCKS12
   datasource:
     url: jdbc:postgresql://localhost:5432/kafka_db
     username: clm
@@ -59,11 +65,12 @@ spring:
             group: testGroup
         default-binder: kafka
 
+
   jpa:
     properties:
       hibernate:
         hbm2ddl:
-          auto: update
+          auto: create-drop
       dialect: org.hibernate.dialect.PostgreSQL82Dialect
   pulsar:
     client:
@@ -73,6 +80,14 @@ spring:
           - message-type: com.example.kafka_demo.dto.DefaultSchema
             schema-info:
               schema-type: JSON
+#      use-tls: true
+#      tls-trust-cert-path: /path/to/trust-certificate.pem
+#      tls-client-cert-path: /path/to/client-certificate.pem
+#      tls-client-key-path: /path/to/client-private-key.pem
+#      tls-client-key-password: your-password
+#      authentication: required-and-verify
+
+
 
 jasypt:
   encryptor:

@@ -31,17 +31,24 @@ public class PulsarConfig {
     }
 
     @Bean
-    public PulsarClient pulsarClient() {
-        try {
-
-            return PulsarClient.builder()
+    public PulsarClient pulsarClient() throws PulsarClientException {
+            ClientBuilder client =  PulsarClient.builder()
                     .dnsLookupBind(DEFAULT_LOOKUP_BIND, 0)
                     .maxConcurrentLookupRequests(5)
-                    .serviceUrl(ApplicationConstants.BrokerServicesUrls.PULSAR_ADMIN_URL)
-                    .build();
-        } catch (Exception e) {
-            throw new ApplicationException(e);
-        }
+                    .serviceUrl(ApplicationConstants.BrokerServicesUrls.PULSAR_ADMIN_URL);
+
+            if(brokersProperties.isSslEnabled()) {
+                return client.useKeyStoreTls(true)
+                        .tlsTrustStoreType("PKCS12")
+                        .tlsKeyStorePassword("password")
+                        .tlsTrustStorePath("/home/user/IdeaProjects/Kafka_Demo/certs/kafka.truststore.jks")
+                        .tlsKeyStoreType("PKCS12")
+                        .tlsKeyStorePath("/home/user/IdeaProjects/Kafka_Demo/certs/kafka.keystore.jks")
+                        .tlsTrustStorePassword("password")
+                        .build();
+            }
+
+            return client.build();
     }
 
     @Bean

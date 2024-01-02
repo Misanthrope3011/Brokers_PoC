@@ -700,7 +700,7 @@ webServiceTlsProvider=Conscrypt
 tlsEnabledWithKeyStore=false
 
 # TLS KeyStore type configuration in broker: JKS, PKCS12
-tlsKeyStoreType=JKS
+tlsKeyStoreType=PKCS12
 
 # TLS KeyStore path in broker
 tlsKeyStore=
@@ -709,7 +709,7 @@ tlsKeyStore=
 tlsKeyStorePassword=
 
 # TLS TrustStore type configuration in broker: JKS, PKCS12
-tlsTrustStoreType=JKS
+tlsTrustStoreType=PKCS12
 
 # TLS TrustStore path in broker
 tlsTrustStore=
@@ -740,7 +740,7 @@ brokerClientCertificateFilePath=
 
 # TLS KeyStore type configuration for internal client: JKS, PKCS12
 # used by the internal client to authenticate with Pulsar brokers
-brokerClientTlsKeyStoreType=JKS
+brokerClientTlsKeyStoreType=PKCS12
 
 # TLS KeyStore path for internal client
 # used by the internal client to authenticate with Pulsar brokers
@@ -752,7 +752,7 @@ brokerClientTlsKeyStorePassword=
 
 # TLS TrustStore type configuration for internal client: JKS, PKCS12
 # used by the internal client to authenticate with Pulsar brokers
-brokerClientTlsTrustStoreType=JKS
+brokerClientTlsTrustStoreType=PKCS12
 
 # TLS TrustStore path for internal client
 # used by the internal client to authenticate with Pulsar brokers

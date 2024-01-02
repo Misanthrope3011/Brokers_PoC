@@ -34,6 +34,14 @@ public class CommonConfig {
     public PulsarAdmin pulsarAdmin() throws PulsarClientException {
         return PulsarAdmin.builder()
                 .serviceHttpUrl(ApplicationConstants.BrokerServicesUrls.PULSAR_ADMIN_URL)
+                .allowTlsInsecureConnection(true)
+                .useKeyStoreTls(true)
+                .tlsTrustStoreType("PKCS12")
+                .tlsKeyStorePassword("password")
+                .tlsTrustStorePath("/home/user/IdeaProjects/Kafka_Demo/certs/kafka.truststore.jks")
+                .tlsKeyStoreType("PKCS12")
+                .tlsKeyStorePath("/home/user/IdeaProjects/Kafka_Demo/certs/kafka.keystore.jks")
+                .tlsTrustStorePassword("password")
                 .build();
     }
 
@@ -42,10 +50,10 @@ public class CommonConfig {
         RandomDataProperties randomDataProperties = appConfigurationProperties.getRandomDataProperties();
         int messageSize = randomDataProperties.subEntityArraySize() * (randomDataProperties.descSizeBytes() + randomDataProperties.nameSizeBytes()) + randomDataProperties.imageSizeBytes();
         Optional<BrokerConfigurationData> brokerConfigurationData = brokerConfigurationRepository.isCurrentConfigExists(appConfigurationProperties.getBrokerConsumerConfigs().numberOfPartitions(),
-                isPartitioned, appConfigurationProperties.getBrokerConsumerConfigs().loadSize(), appConfigurationProperties.getBrokerConsumerConfigs().concurrency(), messageSize);
+                isPartitioned, appConfigurationProperties.getBrokerConsumerConfigs().loadSize(), appConfigurationProperties.getBrokerConsumerConfigs().concurrency(), messageSize, appConfigurationProperties.getBrokerConsumerConfigs().isSslEnabled());
 
         return brokerConfigurationData.orElseGet(() -> brokerConfigurationRepository.save(new BrokerConfigurationData(appConfigurationProperties.getBrokerConsumerConfigs().numberOfPartitions(),
-                appConfigurationProperties.getBrokerConsumerConfigs().loadSize(), isPartitioned, appConfigurationProperties.getBrokerConsumerConfigs().concurrency(), messageSize)));
+                appConfigurationProperties.getBrokerConsumerConfigs().loadSize(), isPartitioned, appConfigurationProperties.getBrokerConsumerConfigs().concurrency(), messageSize, appConfigurationProperties.getBrokerConsumerConfigs().isSslEnabled())));
 
     }
 
